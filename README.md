@@ -14,31 +14,31 @@ The user will run the program from within a directory containing audio files, or
 
 # Technical Aspects
 
-    ## Topics Covered in Class:
+## Topics Covered in Class:
 
-        - Files & file information: Used when manipulating audio files and getting data
-        - Processes: Exec may be used for running a Java program to access a lyrics API; forking used by server and may be used by program to run songs while remaining open for further user actions
-        - Signals: Used for pausing music, skipping songs, etc. via keyboard inputs 
-        - Sockets: Used for developing a forking server which can transfer data and facilitate communication
+- Files & file information: Used when manipulating audio files and getting data
+- Processes: Exec may be used for running a Java program to access a lyrics API; forking used by server and may be used by program to run songs while remaining open for further user actions
+- Signals: Used for pausing music, skipping songs, etc. via keyboard inputs 
+- Sockets: Used for developing a forking server which can transfer data and facilitate communication
 
-    ## Work Breakdown
+## Work Breakdown
 
-        - Daniel: Data structures, file manipulation, server setup
+- Daniel: Data structures, file manipulation, server setup
 
-        - Jason: API access, game development (i.e. logic and data transfer)
+- Jason: API access, game development (i.e. logic and data transfer)
 
-        - Shane: Debugging, command line argument logic
+- Shane: Debugging, command line argument logic
 
-    ## Data Structures:
+## Data Structures:
 
-        - Double-Linked List: Used for playlists. Will contain the titles of individual audio files, as well as data about them, such as run-time and artist, if such information can be obtained (for example, from their metadata).
+- Double-Linked List: Used for playlists. Will contain the titles of individual audio files, as well as data about them, such as run-time and artist, if such information can be obtained (for example, from their metadata).
 
 # Timeline 
 
-    1. Program initialization: cataloging songs, playing music by accessing speakers
-    2. Advanced Musics: requesting specific songs via command line, organizing songs by various characteristics, parsing song metadata for features, API use for lyrics and data (especially if metadata fails)
-    3. Playlists: Forming playlists, organizing playlists, playing playlists (essentially: fancy linked lists!)
-    4. Networking: server setup with forking and simultaneous communication, data transfer between devices 
-    5. More networking: Syncing devices to play music together
-    6. (optional) Games: Music trivia, karaoke
+1. Program initialization: cataloging songs, playing music by accessing speakers
+2. Advanced Musics: requesting specific songs via command line, organizing songs by various characteristics, parsing song metadata for features, API use for lyrics and data (especially if metadata fails)
+3. Playlists: Forming playlists, organizing playlists, playing playlists (essentially: fancy linked lists!)
+4. Networking: server setup with forking and simultaneous communication, data transfer between devices 
+5. More networking: Syncing devices to play music together
+6. (optional) Games: Music trivia, karaoke
 
