@@ -15,8 +15,11 @@ Systems Level Programming Final Project. Buyer beware!
 # Technical Aspects
 
     ## Topics Covered in Class:
-
-        - Allocating memory: 
+    
+        - Files & file information: Used when manipulating audio files and getting data
+        - Processes: Exec may be used for running a Java program to access a lyrics API; forking used by server and may be used by program to run songs while remaining open for further user actions
+        - Signals: Used for pausing music, skipping songs, etc. via keyboard inputs 
+        - Sockets: Used for developing a forking server which can transfer data and facilitate communication
 
     ## Work Breakdown
 
@@ -28,7 +31,7 @@ Systems Level Programming Final Project. Buyer beware!
 
     ## Data Structures:
 
-        - Linked List: Used for playlists. Will contain the titles of individual audio files, as well as data about them, such as run-time and artist, if such information can be obtained (for example, from their metadata).
+        - Double-Linked List: Used for playlists. Will contain the titles of individual audio files, as well as data about them, such as run-time and artist, if such information can be obtained (for example, from their metadata).
 
 # Timeline 
 
