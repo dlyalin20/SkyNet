@@ -1,1 +1,2 @@
 Daniel; 3:16 PM, Monday, January 17; Added main, helpers.c, helpers.h, makefile; Wrote init
+Daniel; 6:40 PM, Wednesday, January 19; Added structs and function for reading and playing wav files; Error: can't pause music
