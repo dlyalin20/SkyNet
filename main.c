@@ -1,5 +1,7 @@
-#include "headers.h"
-#include "forkingprompt.h"
+#include "includes.h"
+#include "runs.h"
+#include "parsing.h"
+#include "shell.h"
 
 
 int main(int argc, char *argv[]) {
@@ -7,6 +9,12 @@ int main(int argc, char *argv[]) {
 	// initialize path
    if (!strcmp(argv[1], "init")) {
 	   	initialize(argc, argv);
+   }
+
+   else if (!strcmp(argv[1], "launch")) {
+
+	   launch_shell();
+
    }
 
    if (!strcmp(argv[1], "-play")) {

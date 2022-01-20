@@ -2,14 +2,13 @@
 
 // includes
 #include "runs.h"
-#include "colors.h"
 #include "parsing.h"
 #include "includes.h"
 
 // initializer arrays for color printing
-char *(colors[8]) = {BRED, BGRN, BYEL, BBLU, BMAG, BCYN, BWHT, reset};
+/* char *(colors[8]) = {BRED, BGRN, BYEL, BBLU, BMAG, BCYN, BWHT, reset};
 char *(colorNames[8]) = {"RED", "GREEN", "YELLOW", "BLUE", "MAGENTA", "CYAN", "WHITE", "NORMAL"};
-
+ */
 // struct declarations
 struct termios orig_termios;
 
@@ -20,7 +19,7 @@ float yvalue(float x) {
 
 
 // function for printing random colors; takes no args; returns random color
-int randomizeColor() {
+/* int randomizeColor() {
     int randomColor;
     // immediately flush stdout
     setbuf(stdout, NULL);
@@ -40,7 +39,7 @@ int randomizeColor() {
   	// char x = '\n';
   	setlinebuf(stdout);
   	return randomColor;
-}
+} */
 
 // Logs errors and events to errorlog; takes error message; returns void
 void log_error(char *message) {
@@ -97,16 +96,16 @@ int launch_shell() {
     // choose color
     // int choiceColor = randomizeColor();
 
-    printf("Launching shell\n");
+    printf("Launching prompt\n");
 
     // signalhandler
-    signal(SIGSEGV, sighandler);
-    signal(SIGINT, sighandler);
+    //signal(SIGSEGV, sighandler);
+    //signal(SIGINT, sighandler);
 
     // uses a history file to track commands for lseeking (TO IMPLEMENT)
     int file = open("history.txt", O_CREAT | O_RDWR | O_APPEND, 0777);
     if (file == -1) {
-        printf("Error with launching shell\n");
+        printf("Error with launching prompt\n");
         log_error(strerror(errno));
         exit(0);
     }
@@ -155,7 +154,7 @@ int launch_shell() {
               }
             }else{
               // printf("%d\n", c);
-              read(STDIN_FILENO, escape, 2) == 1;
+              read(STDIN_FILENO, escape, 2);
               // printf("ESCAPE charaters%s\n", escape);
               if (!strcmp(escape, "[A")){
                 // printf("uparrow pressed\n");

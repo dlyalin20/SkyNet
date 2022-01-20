@@ -1,25 +1,35 @@
-#ifndef HEADERS
-#define HEADERS "headers"
+// Standard includes used everywhere
 
-// stdincludes
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <errno.h>
-#include <time.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <ctype.h>
-#include <SDL2/SDL.h>
+#ifndef INCLUDES
+#define INCLUDES "defined"
 
-// variables
+// preprocessor variables
+#define CHARMAX 100
 #define BUFFER_SIZE 1000
 #define MUS_PATH "ex1.wav"
+
+// standard includes
+#include "runs.h"
+#include "shell.h"
+#include <time.h>
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include "parsing.h"
+#include <termios.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <SDL2/SDL.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#endif
 
 // structs
 
@@ -42,10 +52,5 @@ struct WAV {
 };
 
 // functions
-int initialize(int argc, char **argv);
 int play_song(char *song);
-
-#endif
-
-
-
+int initialize(int argc, char **argv);
