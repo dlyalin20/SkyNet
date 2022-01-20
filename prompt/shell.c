@@ -187,6 +187,7 @@ int launch_shell() {
 
           }else{
               printf("%c", c);
+              // detect single charaters
               if (c == ' '){
                 printf("SPACEBAR PRESSED\n");
               }
@@ -208,6 +209,7 @@ int launch_shell() {
         write(file, hold, 1);
 
         char *tmp;
+        // LONG COMMAND
         printf("STRING SENT %s\n", buffer);
 
     }
