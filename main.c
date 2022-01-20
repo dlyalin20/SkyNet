@@ -3,6 +3,7 @@
 #include "parsing.h"
 #include "shell.h"
 
+// later remove files and see .o
 
 int main(int argc, char *argv[]) {
 
