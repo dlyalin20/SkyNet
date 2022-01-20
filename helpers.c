@@ -22,6 +22,9 @@ int play_song(char *song) {
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
     int success = SDL_QueueAudio(deviceID, wavBuffer, wavLength);
+    if (success == -1){
+      perror(SDL_GetError());
+    }
     SDL_PauseAudioDevice(deviceID, 0);
 
     SDL_Delay(duration_in_milliseconds);
@@ -29,6 +32,7 @@ int play_song(char *song) {
     SDL_CloseAudioDevice(deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
+
 
     return 0;
 }
