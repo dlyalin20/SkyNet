@@ -1,5 +1,5 @@
 #include "headers.h"
-
+#include "forkingprompt.h"
 
 
 int main(int argc, char *argv[]) {

@@ -1,0 +1,11 @@
+all: main.o helpers.o
+	cc  -lSDL2 - main.o helpers.o -o main
+
+main.o: main.c headers.h
+	cc -c main.c
+
+helpers.o: helpers.c headers.h
+	gcc -c helpers.c
+
+clean:
+	rm -rf *.o
