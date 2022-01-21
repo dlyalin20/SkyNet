@@ -201,11 +201,16 @@ int launch_shell() {
           // }else if((c == ' ')){
 
           }else if(keyBinds){
-              printf("%c", c);
+
               // detect single charaters
               if (c == ' '){
                 printf("SPACEBAR PRESSED\n");
               }
+
+              fflush(stdout);
+
+            }else{
+              printf("%c", c);
               buffer[buffer_int] = c;
               fflush(stdout);
               buffer_int ++;
