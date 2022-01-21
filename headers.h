@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include <ctype.h>
 #include <SDL2/SDL.h>
+#include <dirent.h>
 
 // variables
 #define BUFFER_SIZE 1000
