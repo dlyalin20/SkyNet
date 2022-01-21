@@ -85,8 +85,12 @@ void enableRawMode() {
 }
 
 // prints out djshell prompt
-void prompt(char * path) {
-	printf("%s djshell $ ", path);
+void prompt(char * path, int keyBinds) {
+  if (keyBinds){
+    printf("%s djshell [KeyBindsOn]$ ", path);
+  }else{
+    printf("%s djshell $ ", path);
+  }
 }
 
 // main launch loop; takes no args; returns an int (should always return 0)
@@ -113,7 +117,7 @@ int launch_shell() {
     printf("Please separate all arguments with spaces!\n");
     // open file to get history
     int history = open_history();
-
+    int keyBinds = 1;
     // loops until exit is asked or ^C sent
     while (1) {
 
@@ -125,7 +129,7 @@ int launch_shell() {
         char *path = strrchr(tmp_path, '/');
 
         // used for generating colored output
-        prompt(path);
+        prompt(path, keyBinds);
         fflush(stdout);
         char *buffer = calloc(CHARMAX, sizeof(char)); // fix sizing?
         char *dummybuffer = calloc(CHARMAX, sizeof(char)); // fix sizing?
@@ -139,7 +143,6 @@ int launch_shell() {
         unsigned int buffer_int = 0;
         int alreadyinputed = 0;
         while(read(STDIN_FILENO, &c, 1) == 1 && c != 10){
-
           if (iscntrl(c)) {
             if (c == 127){
               // backspace
@@ -148,14 +151,14 @@ int launch_shell() {
                 buffer[buffer_int] = '\0';
                 // clear current terminal line and reset to front of terminal
                 printf("\33[2K\r");
-                prompt(path);
+                prompt(path, keyBinds);
                 printf("%s", buffer);
                 fflush(stdout);
               }
             }else{
               // printf("%d\n", c);
               read(STDIN_FILENO, escape, 2);
-              // printf("ESCAPE charaters%s\n", escape);
+              // printf("ESCAPE charaters:'%s'\n", escape);
               if (!strcmp(escape, "[A")){
                 // printf("uparrow pressed\n");
                 // uparrow pressed
@@ -164,7 +167,7 @@ int launch_shell() {
                 parse_data(history, buffer, size, strlen(buffer));
                 buffer_int = size;
                 printf("\33[2K\r");
-                prompt(path);
+                prompt(path, keyBinds);
                 printf("%s", buffer);
                 fflush(stdout);
               }else if(!strcmp(escape, "[B")){
@@ -178,13 +181,26 @@ int launch_shell() {
                 buffer_int = size;
 
                 printf("\33[2K\r");
-                prompt(path);
+                prompt(path, keyBinds);
                 printf("%s", buffer);
                 fflush(stdout);
+              }else if(!strcmp(escape, "\t")){
+                printf("TAB\n");
+                // tab
+                if (keyBinds == 1){
+                  keyBinds=0;
+                }else{
+                  keyBinds=1;
+                };
+                prompt(path, keyBinds);
+                fflush(stdout);
+
               }
             }
 
-          }else{
+          // }else if((c == ' ')){
+
+          }else if(keyBinds){
               printf("%c", c);
               // detect single charaters
               if (c == ' '){
