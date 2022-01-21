@@ -159,7 +159,7 @@ int launch_shell() {
               // printf("%d\n", c);
               read(STDIN_FILENO, escape, 2);
               // printf("ESCAPE charaters:'%s'\n", escape);
-              if (!strcmp(escape, "[A")){
+              if (!keyBinds && !strcmp(escape, "[A")){
                 // printf("uparrow pressed\n");
                 // uparrow pressed
                 alreadyinputed = 1;
@@ -170,7 +170,7 @@ int launch_shell() {
                 prompt(path, keyBinds);
                 printf("%s", buffer);
                 fflush(stdout);
-              }else if(!strcmp(escape, "[B")){
+              }else if(!keyBinds && !strcmp(escape, "[B")){
                 // down arrow pressed
                 nexthistory(history);
                 // printf("%c\n", );
@@ -184,8 +184,8 @@ int launch_shell() {
                 prompt(path, keyBinds);
                 printf("%s", buffer);
                 fflush(stdout);
-              }else if(!strcmp(escape, "\t")){
-                printf("TAB\n");
+              }else if(escape[0] == '\t'){
+                // printf("TAB\n");
                 // tab
                 if (keyBinds == 1){
                   keyBinds=0;
