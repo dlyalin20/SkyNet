@@ -192,6 +192,7 @@ int launch_shell() {
                 }else{
                   keyBinds=1;
                 };
+                printf("\n");
                 prompt(path, keyBinds);
                 fflush(stdout);
 
