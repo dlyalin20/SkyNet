@@ -65,7 +65,10 @@ char ** find_files(char * path){
   int i = 0;
   while ((entry = readdir(d))){
     if (entry->d_type == DT_REG){
-      strcpy(file_names[i],entry->d_name);
+      char * ext = strrchr(entry->d_name,'.');
+      if (!strcmp(ext,".wav")){
+        strcpy(file_names[i],entry->d_name);
+      }
     }
     i++;
   }
