@@ -1,4 +1,4 @@
-#include "includes.h"
+#include "headers.h"
 
 // worry about parsing later
 int logic_controller(char *buffer) {
@@ -22,7 +22,7 @@ int logic_controller(char *buffer) {
 int play_wav(char *song) {
 
     FILE *fp = fopen(song, "rb");
-    
+
     struct WAV *wav_header = (struct WAV *) calloc(1, sizeof(struct WAV));
 
     fread(wav_header, 1, sizeof(struct WAV), fp);
@@ -76,4 +76,23 @@ int initialize(int argc, char **argv) {
 
     return 0;
 
+}
+
+char ** find_files(char * path){
+  char ** file_names = calloc(BUFFER_SIZE,BUFFER_SIZE);
+
+  DIR * d = opendir(path);
+  struct dirent *entry;
+
+  int i = 0;
+  while ((entry = readdir(d))){
+    if (entry->d_type == DT_REG){
+      char * ext = strrchr(entry->d_name,'.');
+      if (!strcmp(ext,".wav")){
+        strcpy(file_names[i],entry->d_name);
+      }
+    }
+    i++;
+  }
+  return file_names;
 }

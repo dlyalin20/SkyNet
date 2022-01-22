@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
    }
 
    if (!strcmp(argv[1], "-play")) {
-
+     printf("playing: %s\n", argv[2]);
 	   char *song = calloc(BUFFER_SIZE, sizeof(char));
 	   strcpy(song, argv[2]);
       char **array = calloc(5, sizeof(char *));
