@@ -1,32 +1,48 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python/Python.h>
+#include "caller.h"
 
-#include "includes.h"
+//#include "../includes.h"
 
-int main()  {
-
-    // PyObject *pLyr, *pLyrName;
-    PyObject *pName, *pModule, *pDict, *pFunc;
-    PyObject *pArgs, *pValue, *pValue1, *pValue2;
+int main() {
 
     Py_Initialize();
+    initcaller();
+    call_find_lyrics("Beatles, the", "Hey Jude");
+    Py_Finalize();
+    return 0;
+
+}
+
+/* int main()  {
+
+    // PyObject *pLyr, *pLyrName;
+    // PyObject *pName, *pModule, *pDict, *pFunc;
+    // PyObject *pArgs, *pValue, *pValue1, *pValue2;
+
+    // Py_Initialize();
+
+    // printf("Prefix: %s\nExec Prefix: %s\n Python Path: %s\n", Py_GetPrefix(), Py_GetExecPrefix(), Py_GetProgramFullPath());
+    // printf("Module Path: %s\n", Py_GetPath());
+    // printf("Version: %s\nPlatform: %s\nCopyright; %s\n", Py_GetVersion(), Py_GetPlatform(), Py_GetCopyright());
+    // printf("Compiler String: %s\nBuild Info: %s\n", Py_GetCompiler(), Py_GetBuildInfo());
 
    // pName = PyUnicode_FromUnicode("lyrics");
 
-    /* pLyrName = PyUnicode_FromString("lyricsgenius");
+    pLyrName = PyUnicode_FromString("lyricsgenius");
     pLyr = PyImport_Import(pLyrName);
     if (pLyr == NULL) {
         printf("No module named lyricsgenius\n");
         return 1;
     }
 
-    Py_DECREF(pLyrName); */
+    Py_DECREF(pLyrName);
 
-   pName = PyString_FromString("lyrics.py");
+    // pName = PyString_FromString("lyrics.py");
 
-    pModule = PyImport_Import(pName);
+    pModule = PyImport_ImportModule("lyrics");
 
-    Py_DECREF(pName);
+    // Py_DECREF(pName);
 
     if (pModule != NULL) {
 
@@ -93,7 +109,7 @@ int main()  {
     }
     return 0;
 
-    /* PyObject* myModuleString = PyString_FromString((char*)"lyrics");
+    PyObject* myModuleString = PyString_FromString((char*)"lyrics");
     PyObject* myModule = PyImport_Import(myModuleString);
     printf("here\n");
 
@@ -104,6 +120,6 @@ int main()  {
 
     char *result = PyString_AsString(myResult);
 
-    printf("%s\n", result); */
+    printf("%s\n", result);
 
-}
+} */

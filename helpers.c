@@ -1,4 +1,4 @@
-#include "headers.h"
+#include "includes.h"
 
 // worry about parsing later
 int logic_controller(char *buffer) {
@@ -9,9 +9,11 @@ int logic_controller(char *buffer) {
 
     if (!strcmp(array[0], "-play")) {
 
-        const char *extension = strrchr(array[1], ".");
+      const char *extension = strrchr(array[1], ".");
 
-
+      if (!strcmp(extension, "wav")) {
+        play_wav(array[1]);
+      }
 
     }
 
@@ -30,7 +32,7 @@ int play_wav(char *song) {
     float duration_in_seconds = (float) wav_header->chunk_size / wav_header->byte_rate;
     float duration_in_milliseconds = 1000 * duration_in_seconds;
 
-    SDL_Init(SDL_INIT_AUDIO);
+    // SDL_Init(SDL_INIT_AUDIO);
 
     SDL_AudioSpec wavSpec;
     Uint32 wavLength;
@@ -110,3 +112,4 @@ char ** find_files(char * path){
     i++;
   }
   return file_names;
+}

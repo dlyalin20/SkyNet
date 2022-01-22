@@ -92,6 +92,10 @@ void prompt(char * path) {
 // main launch loop; takes no args; returns an int (should always return 0)
 int launch_shell() {
 
+    int keyBinds = 1;
+
+    SDL_Init(SDL_INIT_AUDIO);
+
     srand( time(NULL) );
     // choose color
     // int choiceColor = randomizeColor();
@@ -199,7 +203,7 @@ int launch_shell() {
                   keyBinds=1;
                 };
                 printf("\n");
-                prompt(path, keyBinds);
+                prompt(path);
                 fflush(stdout);
 
               }
@@ -210,6 +214,13 @@ int launch_shell() {
               // detect single charaters
               if (c == ' '){
                 printf("SPACEBAR PRESSED\n");
+                switch(SDL_GetAudioDeviceStatus(2))
+                  {
+                      case SDL_AUDIO_STOPPED: printf("stopped\n"); break;
+                      case SDL_AUDIO_PLAYING: printf("playing\n"); SDL_PauseAudio(1); break;
+                      case SDL_AUDIO_PAUSED: printf("paused\n"); SDL_PauseAudio(0); break;
+                      default: printf("???"); break;
+                  }
               }
               buffer[buffer_int] = c;
               fflush(stdout);
@@ -229,8 +240,17 @@ int launch_shell() {
         write(file, hold, 1);
 
         char *tmp;
+        int f = fork();
+        if (!f) { // child process
+
+          logic_controller(buffer);
+
+        }
+        else {
+          printf("STRING SENT %s\n", buffer);
+          continue;
+        }
         // LONG COMMAND
-        printf("STRING SENT %s\n", buffer);
         // LOGIC CONTROLLER
         //logic_controller(buffer);
 
