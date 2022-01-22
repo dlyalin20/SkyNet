@@ -218,9 +218,9 @@ int launch_shell() {
 
         char *tmp;
         // LONG COMMAND
-        //printf("STRING SENT %s\n", buffer);
+        printf("STRING SENT %s\n", buffer);
         // LOGIC CONTROLLER
-        logic_controller(buffer);
+        //logic_controller(buffer);
 
     }
     return 0;

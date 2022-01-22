@@ -5,12 +5,24 @@
 
 int main()  {
 
+    // PyObject *pLyr, *pLyrName;
     PyObject *pName, *pModule, *pDict, *pFunc;
     PyObject *pArgs, *pValue, *pValue1, *pValue2;
 
     Py_Initialize();
 
-    pName = PyString_FromString("lyrics");
+   // pName = PyUnicode_FromUnicode("lyrics");
+
+    /* pLyrName = PyUnicode_FromString("lyricsgenius");
+    pLyr = PyImport_Import(pLyrName);
+    if (pLyr == NULL) {
+        printf("No module named lyricsgenius\n");
+        return 1;
+    }
+
+    Py_DECREF(pLyrName); */
+
+   pName = PyString_FromString("lyrics.py");
 
     pModule = PyImport_Import(pName);
 

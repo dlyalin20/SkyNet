@@ -5,7 +5,7 @@ int logic_controller(char *buffer) {
 
     char **array = calloc(5, sizeof(char *));
 
-    split(buffer, array);
+    //split(buffer, array);
 
     if (!strcmp(array[0], "-play")) {
 
