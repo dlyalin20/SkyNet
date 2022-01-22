@@ -232,6 +232,9 @@ int launch_shell() {
                       default: printf("???"); break;
                   }
               }
+              // printf("\n");
+              prompt(path, keyBinds);
+              fflush(stdout);
             }
 
 
