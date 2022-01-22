@@ -32,7 +32,7 @@ int play_wav(char *song) {
     float duration_in_seconds = (float) wav_header->chunk_size / wav_header->byte_rate;
     float duration_in_milliseconds = 1000 * duration_in_seconds;
 
-    // SDL_Init(SDL_INIT_AUDIO);
+    SDL_Init(SDL_INIT_AUDIO);
 
     SDL_AudioSpec wavSpec;
     Uint32 wavLength;

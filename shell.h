@@ -15,7 +15,7 @@ float yvalue(float x);
 // disables Raw Mode and makes stdin buffered; takes and returns nothing
 void disableRawMode();
 // prints out djshell prompt
-void prompt(char * path);
+void prompt(char * path, int keyBinds);
 // Logs errors and events to errorlog; takes error message; returns void
 void log_error(char *message);
 // signal handler; takes int signal; no return, always exits
