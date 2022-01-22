@@ -16,6 +16,7 @@ void parse_data(int fd, char * str, int size, int arrSize);
 void prevhistoryWipe(int fd);
 int prevhistory(int fd);
 int nexthistory(int fd);
+void split(char *buffer, char **array);
 
 
 #endif

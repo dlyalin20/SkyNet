@@ -86,7 +86,7 @@ void enableRawMode() {
 
 // prints out djshell prompt
 void prompt(char * path) {
-	printf("%s djshell $ ", path);
+	printf("%s CPotify $ ", path);
 }
 
 // main launch loop; takes no args; returns an int (should always return 0)
@@ -113,6 +113,15 @@ int launch_shell() {
     printf("Please separate all arguments with spaces!\n");
     // open file to get history
     int history = open_history();
+
+    /* switch (SDL_GetAudioDeviceStatus(2)) {
+
+        case SDL_AUDIO_PAUSED: printf("paused\n"); break;
+        case SDL_AUDIO_STOPPED: printf("stopped\n"); break;
+        case SDL_AUDIO_PLAYING: printf("playing\n"); break;
+        default: printf("????\n"); break;
+
+    } */
 
     // loops until exit is asked or ^C sent
     while (1) {
@@ -209,7 +218,9 @@ int launch_shell() {
 
         char *tmp;
         // LONG COMMAND
-        printf("STRING SENT %s\n", buffer);
+        //printf("STRING SENT %s\n", buffer);
+        // LOGIC CONTROLLER
+        logic_controller(buffer);
 
     }
     return 0;
