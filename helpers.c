@@ -1,6 +1,25 @@
-#include "includes.h"
+#include "headers.h"
 
-int play_song(char *song) {
+// worry about parsing later
+int logic_controller(char *buffer) {
+
+    char **array = calloc(5, sizeof(char *));
+
+    split(buffer, array);
+
+    if (!strcmp(array[0], "-play")) {
+
+        const char *extension = strrchr(array[1], ".");
+
+
+
+    }
+
+    return 0;
+
+}
+
+int play_wav(char *song) {
 
     FILE *fp = fopen(song, "rb");
 
@@ -21,10 +40,10 @@ int play_song(char *song) {
 
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
+    printf("Audio Device ID: %d\n", deviceID);
+    printf("%s\n", SDL_GetError());
+
     int success = SDL_QueueAudio(deviceID, wavBuffer, wavLength);
-    if (success == -1){
-      perror(SDL_GetError());
-    }
     SDL_PauseAudioDevice(deviceID, 0);
 
     SDL_Delay(duration_in_milliseconds);
@@ -32,7 +51,6 @@ int play_song(char *song) {
     SDL_CloseAudioDevice(deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
-
 
     return 0;
 }
@@ -74,3 +92,21 @@ void shuffle(char **array, size_t n)
         }
     }
 }
+
+char ** find_files(char * path){
+  char ** file_names = calloc(BUFFER_SIZE,BUFFER_SIZE);
+
+  DIR * d = opendir(path);
+  struct dirent *entry;
+
+  int i = 0;
+  while ((entry = readdir(d))){
+    if (entry->d_type == DT_REG){
+      char * ext = strrchr(entry->d_name,'.');
+      if (!strcmp(ext,".wav")){
+        strcpy(file_names[i],entry->d_name);
+      }
+    }
+    i++;
+  }
+  return file_names;

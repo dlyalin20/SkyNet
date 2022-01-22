@@ -3,6 +3,17 @@
 // includes
 #include "includes.h"
 
+void split(char *buffer, char **array) {
+
+	int i = 0;
+
+	array[i] = strtok(buffer, " ");
+
+	while (array[i] != NULL)
+		array[++i] = strtok(NULL, " ");
+
+}
+
 // Strips strings of trailing and leading whitespace; takes a string; returns a string
 char * strip(char *line) {
 

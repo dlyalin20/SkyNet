@@ -33,7 +33,9 @@ int main(int argc, char *argv[]) {
      printf("playing: %s\n", argv[2]);
 	   char *song = calloc(BUFFER_SIZE, sizeof(char));
 	   strcpy(song, argv[2]);
-	   play_song(song); // CHECK FOR FILE FORMAT // ERROR CHECKING FOR ARG AMOUNTS
+      char **array = calloc(5, sizeof(char *));
+      split(song, array);
+	   play_wav(song); // CHECK FOR FILE FORMAT // ERROR CHECKING FOR ARG AMOUNTS
 
    }
 

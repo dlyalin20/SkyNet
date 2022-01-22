@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "headers.h": "c"
+        "headers.h": "c",
+        "includes.h": "c",
+        "python.h": "c"
     }
 }

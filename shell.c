@@ -85,12 +85,8 @@ void enableRawMode() {
 }
 
 // prints out djshell prompt
-void prompt(char * path, int keyBinds) {
-  if (keyBinds){
-    printf("%s djshell [KeyBindsOn]$ ", path);
-  }else{
-    printf("%s djshell $ ", path);
-  }
+void prompt(char * path) {
+	printf("%s CPotify $ ", path);
 }
 
 // main launch loop; takes no args; returns an int (should always return 0)
@@ -117,7 +113,16 @@ int launch_shell() {
     printf("Please separate all arguments with spaces!\n");
     // open file to get history
     int history = open_history();
-    int keyBinds = 1;
+
+    /* switch (SDL_GetAudioDeviceStatus(2)) {
+
+        case SDL_AUDIO_PAUSED: printf("paused\n"); break;
+        case SDL_AUDIO_STOPPED: printf("stopped\n"); break;
+        case SDL_AUDIO_PLAYING: printf("playing\n"); break;
+        default: printf("????\n"); break;
+
+    } */
+
     // loops until exit is asked or ^C sent
     while (1) {
 
@@ -129,7 +134,7 @@ int launch_shell() {
         char *path = strrchr(tmp_path, '/');
 
         // used for generating colored output
-        prompt(path, keyBinds);
+        prompt(path);
         fflush(stdout);
         char *buffer = calloc(CHARMAX, sizeof(char)); // fix sizing?
         char *dummybuffer = calloc(CHARMAX, sizeof(char)); // fix sizing?
@@ -151,15 +156,15 @@ int launch_shell() {
                 buffer[buffer_int] = '\0';
                 // clear current terminal line and reset to front of terminal
                 printf("\33[2K\r");
-                prompt(path, keyBinds);
+                prompt(path);
                 printf("%s", buffer);
                 fflush(stdout);
               }
             }else{
               // printf("%d\n", c);
               read(STDIN_FILENO, escape, 2);
-              // printf("ESCAPE charaters:'%s'\n", escape);
-              if (!keyBinds && !strcmp(escape, "[A")){
+              // printf("ESCAPE charaters%s\n", escape);
+              if (!strcmp(escape, "[A")){
                 // printf("uparrow pressed\n");
                 // uparrow pressed
                 alreadyinputed = 1;
@@ -167,10 +172,10 @@ int launch_shell() {
                 parse_data(history, buffer, size, strlen(buffer));
                 buffer_int = size;
                 printf("\33[2K\r");
-                prompt(path, keyBinds);
+                prompt(path);
                 printf("%s", buffer);
                 fflush(stdout);
-              }else if(!keyBinds && !strcmp(escape, "[B")){
+              }else if(!strcmp(escape, "[B")){
                 // down arrow pressed
                 nexthistory(history);
                 // printf("%c\n", );
@@ -181,7 +186,7 @@ int launch_shell() {
                 buffer_int = size;
 
                 printf("\33[2K\r");
-                prompt(path, keyBinds);
+                prompt(path);
                 printf("%s", buffer);
                 fflush(stdout);
               }else if(escape[0] == '\t'){
@@ -200,19 +205,12 @@ int launch_shell() {
               }
             }
 
-          // }else if((c == ' ')){
-
-          }else if(keyBinds){
-
+          }else{
+              printf("%c", c);
               // detect single charaters
               if (c == ' '){
                 printf("SPACEBAR PRESSED\n");
               }
-
-              fflush(stdout);
-
-            }else{
-              printf("%c", c);
               buffer[buffer_int] = c;
               fflush(stdout);
               buffer_int ++;
@@ -232,7 +230,9 @@ int launch_shell() {
 
         char *tmp;
         // LONG COMMAND
-        printf("STRING SENT %s\n", buffer);
+        //printf("STRING SENT %s\n", buffer);
+        // LOGIC CONTROLLER
+        logic_controller(buffer);
 
     }
     return 0;

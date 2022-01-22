@@ -11,6 +11,7 @@
 // standard includes
 #include "runs.h"
 #include "shell.h"
+#include "cJSON.h"
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
@@ -52,6 +53,7 @@ struct WAV {
 };
 
 // functions
-int play_song(char *song);
-int initialize(int argc, char **argv);
 void shuffle(char **array, size_t n);
+int play_wav(char *song);
+int logic_controller(char *buffer);
+int initialize(int argc, char **argv);
