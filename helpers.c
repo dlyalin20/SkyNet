@@ -3,7 +3,7 @@
 int play_song(char *song) {
 
     FILE *fp = fopen(song, "rb");
-    
+
     struct WAV *wav_header = (struct WAV *) calloc(1, sizeof(struct WAV));
 
     fread(wav_header, 1, sizeof(struct WAV), fp);
@@ -58,4 +58,19 @@ int initialize(int argc, char **argv) {
 
     return 0;
 
+}
+
+void shuffle(char **array, size_t n)
+{
+    if (n > 1)
+    {
+        size_t i;
+        for (i = 0; i < n - 1; i++)
+        {
+          size_t j = i + rand() % n;
+          char * t = array[j];
+          array[j] = array[i];
+          array[i] = t;
+        }
+    }
 }

@@ -54,3 +54,4 @@ struct WAV {
 // functions
 int play_song(char *song);
 int initialize(int argc, char **argv);
+void shuffle(char **array, size_t n);
