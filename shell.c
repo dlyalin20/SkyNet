@@ -147,10 +147,9 @@ int launch_shell() {
         char * escape = calloc(2, sizeof(char));
         unsigned int buffer_int = 0;
         int alreadyinputed = 0;
-        while(read(STDIN_FILENO, &c, 1) == 1 && c != 10){
-
+        while(read(STDIN_FILENO, &c, 1) == 1 && !(!keyBinds && c == 10)){
           if (iscntrl(c)) {
-            if (c == 127){
+            if (!keyBinds && c == 127){
               // backspace
               if (buffer_int >0){
                 buffer_int--;
@@ -190,6 +189,19 @@ int launch_shell() {
                 prompt(path);
                 printf("%s", buffer);
                 fflush(stdout);
+              }else if(escape[0] == '\t'){
+                // printf("TAB\n");
+                // tab
+                strncpy(buffer, "", CHARMAX);
+                if (keyBinds == 1){
+                  keyBinds=0;
+                }else{
+                  keyBinds=1;
+                };
+                printf("\n");
+                prompt(path, keyBinds);
+                fflush(stdout);
+
               }
             }
 

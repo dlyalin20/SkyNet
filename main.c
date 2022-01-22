@@ -2,10 +2,21 @@
 #include "runs.h"
 #include "parsing.h"
 #include "shell.h"
-
 // later remove files and see .o
 
 int main(int argc, char *argv[]) {
+  // test shuffle
+  char *strarray[3] = {"a", "b", "c"};
+  int i;
+  for (i = 0; i < 3; i ++){
+    printf("%s, ", strarray[i]);
+  }
+  printf("\nshuffle now:\n ");
+  shuffle(strarray, 3);
+  for (i = 0; i < 3; i ++){
+    printf("%s, ", strarray[i]);
+  }
+  printf("\n");
 
 	// initialize path
    if (!strcmp(argv[1], "init")) {

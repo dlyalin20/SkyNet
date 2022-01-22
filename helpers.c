@@ -78,6 +78,21 @@ int initialize(int argc, char **argv) {
 
 }
 
+void shuffle(char **array, size_t n)
+{
+    if (n > 1)
+    {
+        size_t i;
+        for (i = 0; i < n - 1; i++)
+        {
+          size_t j = i + rand() % n;
+          char * t = array[j];
+          array[j] = array[i];
+          array[i] = t;
+        }
+    }
+}
+
 char ** find_files(char * path){
   char ** file_names = calloc(BUFFER_SIZE,BUFFER_SIZE);
 
@@ -95,4 +110,3 @@ char ** find_files(char * path){
     i++;
   }
   return file_names;
-}
