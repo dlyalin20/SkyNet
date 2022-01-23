@@ -65,36 +65,38 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) {
 
         printf("Song Title: %s\n", cTitle->valuestring);
+        strcpy(info->title, cTitle->valuestring);
 
+    }else{
+        strcpy(info->title, "Unknown");
     }
+    printf("Song Title: %s\n", info->title);
+
 
     cJSON *cArtist = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Artist");
 
     if (cJSON_IsString(cArtist) && (cArtist->valuestring != NULL)) {
-
+        strcpy(info->artist, cArtist->valuestring);
         printf("Song Artist: %s\n", cArtist->valuestring);
-
+    }else{
+      strcpy(info->artist, "Unknown");
     }
+    printf("Song Artist: %s\n", info->artist);
 
     cJSON *cGenre = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Genre");
 
     if (cJSON_IsString(cGenre) && (cGenre->valuestring != NULL)) {
-
-      printf("Song Genre: %s\n", cGenre->valuestring);
-
+      strcpy(info->genre, cGenre->valuestring);
+    }else{
+      strcpy(info->genre, "Unknown");
     }
+    printf("Song Genre: %s\n", info->genre);
 
     printf("PATH: %s\n", PATH);
-    //printf("%s\n", info->path);
-   //printf("%d\n", info->artist);
-    strcpy(info->artist, cArtist->valuestring);
-    printf("Added Artist: %s\n", info->artist);
+    printf("info artist%s\n", info->path);
+
     strcpy(info->path, PATH);
     printf("Added Path: %s\n", info->path);
-    strcpy(info->title, cTitle->valuestring);
-    printf("Added Title: %s\n", info->title);
-    strcpy(info->genre, cGenre->valuestring);
-    printf("Added Genre: %s\n", info->genre);
     info->seconds = get_duration(PATH);
     printf("Added Duration: %f\n", info->seconds);
 
@@ -102,7 +104,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
     //printf("%s by %s\n", song_info[1], song_info[0]);
 
-    remove(file_name);
+    // remove(file_name);
 
     // int fd = open("song_data.json", O_CREAT | O_WRONLY);
 
