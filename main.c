@@ -50,6 +50,13 @@ int main(int argc, char *argv[]) {
 
    }
 
+   else if (!strcmp(argv[1], "-create")) {
+
+     printf("Creating playlist\n");
+     make_playlist();
+
+   }
+
    /* else if (!strcmp(argv[1], "unpause")) {
 
      unpause_wav();

@@ -350,25 +350,32 @@ int play_wav(char *song) {
 } */
 
 int initialize(int argc, char **argv) {
-
-    int fd = open("data.txt", O_CREAT | O_EXCL | O_WRONLY | O_APPEND);
+    printf("Starting initialization\n");
+    int fd = open("data.txt", O_CREAT | O_RDWR | O_APPEND);
     char *path = calloc(BUFFER_SIZE, sizeof(char));
-    strcpy(path, "AUDPATH=");
-    if (argc == 4 && !strcmp(argv[2], "-path")) {
-        strcat(path, argv[3]);
-        strcat(path, "\n");
-        write(fd, path, strlen(path));
-    }
-    else {
-        char *tmp = calloc(BUFFER_SIZE, sizeof(char));
-        getcwd(tmp, BUFFER_SIZE);
-        strcat(path, tmp);
-        strcat(path, "\n");
-        write(fd, path, strlen(path));
-    }
+    char *tmp = calloc(BUFFER_SIZE, sizeof(char));
+    getcwd(tmp, BUFFER_SIZE);
+    printf("%s\n", tmp);
+    strcpy(path, tmp);
+    // write(fd, path, strlen(path));
+    printf("%s\n", path);
+    struct song_info *song_data[BUFFER_SIZE];
+    find_files(song_data, path);
+    printf("Exited find_files()\n");
+    printf("%s\n", song_data[0]->title);
+    int i;
+    for (i = 0; i < BUFFER_SIZE; i++) {
 
+      if (song_data[i]->seconds == 0) 
+        break;
+      else 
+
+    }
+    write(fd, song_data, BUFFER_SIZE * sizeof(song_data));
+    struct song_info *cpy[BUFFER_SIZE];
+    read(fd, cpy, BUFFER_SIZE * sizeof(song_data));
+    printf("%s\n", cpy[0]->title);
     return 0;
-
 }
 
 void shuffle(char **array, size_t n)
@@ -386,21 +393,14 @@ void shuffle(char **array, size_t n)
     }
 }
 
-char ** find_files(char * path){
-  char **file_names = calloc(BUFFER_SIZE, BUFFER_SIZE);
+int make_playlist() { // in progress
 
-  DIR * d = opendir(path);
-  struct dirent *entry;
+  printf("Please input playlist nane: \n");
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+  fread(buffer, sizeof(char), BUFFER_SIZE, stdin);
+  int fd = open(buffer, O_CREAT | O_EXCL | O_WRONLY | O_APPEND);
 
-  int i = 0;
-  while ((entry = readdir(d))){
-    if (entry->d_type == DT_REG){
-      char * ext = strrchr(entry->d_name,'.');
-      if (!strcmp(ext,".wav")){
-        strcpy(file_names[i],entry->d_name);
-      }
-    }
-    i++;
-  }
-  return file_names;
+  struct songs *front = NULL;
+
+
 }

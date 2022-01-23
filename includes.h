@@ -22,7 +22,7 @@
 // standard includes
 #include "runs.h"
 #include "shell.h"
-//#include "cJSON.h"
+#include "cJSON.h"
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
@@ -45,6 +45,7 @@
 #include <SDL2/SDL.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include "linked_list.h"
 #endif
 
 // structs
@@ -72,6 +73,7 @@ void shuffle(char **array, size_t n);
 int play_wav(char *song);
 int logic_controller(char *buffer);
 int initialize(int argc, char **argv);
+int make_playlist();
 //int launch();
 //int shut_down();
 //static void sighandler(int sig);
