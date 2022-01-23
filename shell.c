@@ -56,7 +56,7 @@ void log_error(char *message) {
 }
 
 // signal handler; takes int signal; no return, always exits
-static void sighandler(int sig) {
+/* static void sighandler(int sig) {
     if (sig == SIGINT) {
         printf("\nExiting Shell\n"); // exits shell gracefully on ^C
         exit(0);
@@ -65,7 +65,7 @@ static void sighandler(int sig) {
         log_error(strerror(errno)); // won't crash on segfaults // exits gracefully
         exit(-1);
     }
-}
+} */
 // https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
 
 // disables Raw Mode and makes stdin buffered; takes and returns nothing
@@ -98,7 +98,22 @@ int launch_shell() {
 
     int keyBinds = 1;
 
-    SDL_Init(SDL_INIT_AUDIO);
+    int *seconds;
+    SDL_AudioSpec *wavSpec;
+    Uint32 *wavLength;
+    Uint8 **wavBuffer;
+
+    int shmdSec = shmget(secKey, sizeof(int), IPC_CREAT | 0640);
+    int shmdSpec = shmget(specKey, sizeof(SDL_AudioSpec), IPC_CREAT | 0640);
+    int shmdLen = shmget(lenKey, sizeof(Uint32), IPC_CREAT | 0640);
+    int shmdBuf = shmget(bufKey, sizeof(Uint8 *), IPC_CREAT | 0640);
+
+    seconds = shmat(shmdSec, 0, 0);
+    wavSpec = shmat(shmdSpec, 0, 0);
+    wavLength = shmat(shmdLen, 0, 0);
+    *wavBuffer = shmat(shmdBuf, 0, 0);
+
+    //SDL_Init(SDL_INIT_AUDIO);
 
     srand( time(NULL) );
     // choose color
@@ -249,22 +264,32 @@ int launch_shell() {
         write(file, buffer, strlen(buffer));
         char * hold = "\n";
         write(file, hold, 1);
+        //int f = fork();
+        /* if (!f) { // child process
 
-        char *tmp;
-        int f = fork();
-        if (!f) { // child process
-
-          logic_controller(buffer);
-
-        }
-        else {
           printf("STRING SENT %s\n", buffer);
           continue;
+          
         }
+        else {
+          
+          logic_controller(buffer);
+
+        } */
         // LONG COMMAND
         // LOGIC CONTROLLER
-        //logic_controller(buffer);
+        logic_controller(buffer);
 
     }
+
+    shmdt(seconds);
+    shmdt(wavSpec);
+    shmdt(wavLength);
+    shmdt(*wavBuffer);
+
+    shmctl(shmdSec, IPC_, 0);
+    shmctl(shmdSpec, IPC_REMOVE, 0);
+    shmctl(shmdLen, IPC_REMOVE, 0);
+    shmctl(shmdBuf, IPC_REMOVE, 0);
     return 0;
 }

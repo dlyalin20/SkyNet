@@ -3,6 +3,7 @@
         "headers.h": "c",
         "includes.h": "c",
         "python.h": "c",
-        "caller.h": "c"
+        "caller.h": "c",
+        "ios": "c"
     }
 }

@@ -7,6 +7,17 @@
 #define CHARMAX 100
 #define BUFFER_SIZE 1000
 #define MUS_PATH "ex1.wav"
+/* #define secKey ftok("main.c", getpid());
+#define specKey ftok("shell.c", getpid());
+#define lenKey ftok("helpers.c", getpid());
+#define bufKey ftok("parsing.c", getpid()); */
+
+#define secKey 100
+#define specKey 200
+#define lenKey 300
+#define bufKey 400
+#define IDKey 500
+#define maxKey 600
 
 // standard includes
 #include "runs.h"
@@ -22,8 +33,12 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include "parsing.h"
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
 #include <termios.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -57,3 +72,7 @@ void shuffle(char **array, size_t n);
 int play_wav(char *song);
 int logic_controller(char *buffer);
 int initialize(int argc, char **argv);
+//int launch();
+//int shut_down();
+//static void sighandler(int sig);
+//int unpause_wav();
