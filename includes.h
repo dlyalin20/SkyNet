@@ -4,8 +4,7 @@
 #define INCLUDES "defined"
 
 // preprocessor variables
-#define CHARMAX 100
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 100
 #define MUS_PATH "ex1.wav"
 /* #define secKey ftok("main.c", getpid());
 #define specKey ftok("shell.c", getpid());

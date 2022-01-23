@@ -351,7 +351,12 @@ int play_wav(char *song) {
 
 int initialize(int argc, char **argv) {
     printf("Starting initialization\n");
+    //FILE *file = fopen("data.txt", "wb+");
     int fd = open("data.txt", O_CREAT | O_RDWR | O_APPEND);
+    /* if (file == NULL) {
+      printf("Failed to open data.txt\n");
+      exit(-1);
+    } */
     char *path = calloc(BUFFER_SIZE, sizeof(char));
     char *tmp = calloc(BUFFER_SIZE, sizeof(char));
     getcwd(tmp, BUFFER_SIZE);
@@ -363,18 +368,32 @@ int initialize(int argc, char **argv) {
     find_files(song_data, path);
     printf("Exited find_files()\n");
     printf("%s\n", song_data[0]->title);
-    int i;
+    /* int i;
     for (i = 0; i < BUFFER_SIZE; i++) {
-
-      if (song_data[i]->seconds == 0) 
+      printf("%s\n", song_data[i]->title);
+      printf("%f\n", song_data[i]->seconds);
+      if (song_data[i]->seconds == 0)
         break;
-      else 
-
+      else
+        fwrite(song_data[i], sizeof(struct song_info), 1, file);
+    } */
+    //int err = fwrite(song_data, sizeof(struct song_info), BUFFER_SIZE, file);
+    //if (!err)
+    //  printf("Error: %s\n", strerror(errno));
+    int err = write(fd, song_data, BUFFER_SIZE * sizeof(struct song_info));
+    if (!err) 
+      printf("Error: %s\n", strerror(errno));
+    printf("Hopefully wrote something\n");
+    struct song_info *cpy[BUFFER_SIZE]; //= calloc(BUFFER_SIZE, sizeof(struct song_info));
+    err = read(fd, cpy, BUFFER_SIZE * sizeof(struct song_info));
+    if (!err) {
+      printf("Error: %s\n", strerror(errno));
     }
-    write(fd, song_data, BUFFER_SIZE * sizeof(song_data));
-    struct song_info *cpy[BUFFER_SIZE];
-    read(fd, cpy, BUFFER_SIZE * sizeof(song_data));
+    //fread(cpy, sizeof(struct song_info), BUFFER_SIZE, file);
+    printf("Hopefully read something\n");
+    //printf("%lu\n", strlen("/Users/Daniel/Desktop/School Stuff/GitHub/SkyNet"));
     printf("%s\n", cpy[0]->title);
+    printf("Didn't make it here\n");
     return 0;
 }
 
