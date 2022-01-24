@@ -351,12 +351,7 @@ int play_wav(char *song) {
 
 int initialize(int argc, char **argv) {
     printf("Starting initialization\n");
-    //FILE *file = fopen("data.txt", "wb+");
-    int fd = open("data.txt", O_CREAT | O_RDWR | O_APPEND);
-    /* if (file == NULL) {
-      printf("Failed to open data.txt\n");
-      exit(-1);
-    } */
+    FILE *file = fopen("data.txt", "wb+");
     char *path = calloc(BUFFER_SIZE, sizeof(char));
     char *tmp = calloc(BUFFER_SIZE, sizeof(char));
     getcwd(tmp, BUFFER_SIZE);
@@ -364,36 +359,66 @@ int initialize(int argc, char **argv) {
     strcpy(path, tmp);
     // write(fd, path, strlen(path));
     printf("%s\n", path);
-    struct song_info *song_data[BUFFER_SIZE];
+    struct song_info *song_data = calloc(sizeof(struct song_info), BUFFER_SIZE);
     find_files(song_data, path);
     printf("Exited find_files()\n");
-    printf("%s\n", song_data[0]->title);
-    /* int i;
+    printf("T1: %s\n", song_data[0].title);
+    printf("T2: %s\n", song_data[1].title);
+    printf("P1: %s\n", song_data[0].path);
+    printf("P2: %s\n", song_data[1].path);
+    printf("Struct Path in finding: %p\n", song_data);
+    printf("Struct Size in Finding: %lu\n", sizeof(song_data));
+    int err, i;
+    int num_full = 0;
+    // err = fwrite(song_data, sizeof(struct song_info) * BUFFER_SIZE, 1, file);
     for (i = 0; i < BUFFER_SIZE; i++) {
-      printf("%s\n", song_data[i]->title);
-      printf("%f\n", song_data[i]->seconds);
-      if (song_data[i]->seconds == 0)
-        break;
+      if (strcmp(song_data[i].path, "")) {
+        fwrite(song_data[i].path, BUFFER_SIZE, 1, file);
+        fwrite(song_data[i].artist, BUFFER_SIZE, 1, file);
+        fwrite(song_data[i].title, BUFFER_SIZE, 1, file);
+        fwrite(&(song_data[i].seconds), sizeof(float), 1, file);
+        num_full++;
+      }
       else
-        fwrite(song_data[i], sizeof(struct song_info), 1, file);
-    } */
-    //int err = fwrite(song_data, sizeof(struct song_info), BUFFER_SIZE, file);
-    //if (!err)
-    //  printf("Error: %s\n", strerror(errno));
-    int err = write(fd, song_data, BUFFER_SIZE * sizeof(struct song_info));
-    if (!err) 
-      printf("Error: %s\n", strerror(errno));
-    printf("Hopefully wrote something\n");
-    struct song_info *cpy[BUFFER_SIZE]; //= calloc(BUFFER_SIZE, sizeof(struct song_info));
-    err = read(fd, cpy, BUFFER_SIZE * sizeof(struct song_info));
-    if (!err) {
-      printf("Error: %s\n", strerror(errno));
+        break;
+      // err = fwrite((song_data[i]), sizeof(struct song_info), 1, file);
     }
-    //fread(cpy, sizeof(struct song_info), BUFFER_SIZE, file);
-    printf("Hopefully read something\n");
-    //printf("%lu\n", strlen("/Users/Daniel/Desktop/School Stuff/GitHub/SkyNet"));
-    printf("%s\n", cpy[0]->title);
-    printf("Didn't make it here\n");
+    if (err)
+      printf("Error Writing: %s\n", strerror(errno));
+    else
+      printf("Finished Writing\n");
+    printf("numfull: %d\n", num_full);
+    fseek(file, 0, SEEK_SET);
+    struct song_info *cpy = calloc(sizeof(struct song_info), BUFFER_SIZE);
+    for (i = 0; i < num_full; i++) {
+      char *path = calloc(BUFFER_SIZE, sizeof(char));
+      fread(path, BUFFER_SIZE, 1, file);
+      printf("Path Read: %s\n", path);
+      char *artist = calloc(BUFFER_SIZE, sizeof(char));
+      fread(artist, BUFFER_SIZE, 1, file);
+      char *title = calloc(BUFFER_SIZE, sizeof(char));
+      fread(title, BUFFER_SIZE, 1, file);
+      char *genre = calloc(BUFFER_SIZE, sizeof(char));
+      fread(genre, BUFFER_SIZE, 1, file);
+      float seconds = 0;
+      char *sectxt = calloc(sizeof(float), sizeof(char));
+      fread(sectxt, sizeof(float), 1, file);
+      seconds = atof(sectxt);
+      struct song_info *tmp = calloc(sizeof(struct song_info), 1);
+      strcpy(tmp->path, path);
+      strcpy(tmp->artist, artist);
+      strcpy(tmp->title, title);
+      strcpy(tmp->genre, genre);
+      tmp->seconds = seconds;
+      cpy[i] = *tmp;
+    }
+   // err = fread(cpy, sizeof(struct song_info) * BUFFER_SIZE, 1, file);
+    if (err)
+      printf("Error Reading: %s\n", strerror(errno));
+    else
+      printf("Finished reading\n");
+    printf("%s\n", cpy[0].title);
+    printf("%s\n", cpy[1].title);
     return 0;
 }
 

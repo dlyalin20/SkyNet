@@ -28,6 +28,6 @@ struct songs * create_song(char *title);
 struct songs * insert_song_end(struct songs *to_add, struct songs *HEAD);
 struct songs * remove_song(char *title, struct songs *HEAD);
 int delete_playlist(char *playlist_name);
-struct song_info ** find_files(struct song_info **song_data, char * path);
+struct song_info * find_files(struct song_info *song_data, char * path);
 
 #endif
