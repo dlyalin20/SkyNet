@@ -13,7 +13,7 @@ struct song_info {
 };
 
 struct songs {
-
+  struct song_info info;
 	char name[BUFFER_SIZE];
 	struct songs *next;
 

@@ -44,7 +44,7 @@
     //sleep(3);
 
     shmdt(wavBuffer);
-    
+
     printf("hopefully we have closed audio!\n");
 
     int *seconds;
@@ -166,7 +166,7 @@ int play_wav(char *song) {
         }
         err = 0;
       }
-      else 
+      else
         err = 1;
 
     }
@@ -247,7 +247,7 @@ int play_wav(char *song) {
     millimax = shmat(shmdMax, 0, 0);
 
     *millimax = duration_in_milliseconds;
-    
+
 
     SDL_LoadWAV(song, wavSpec, &wavBuffer, wavLength);
 
@@ -260,7 +260,7 @@ int play_wav(char *song) {
     SDL_PauseAudioDevice(*deviceID, 0);
 
     for (*seconds = 0; *seconds < duration_in_milliseconds; (*seconds)++) {
-      
+
       SDL_Delay(1);
 
     }
@@ -269,7 +269,7 @@ int play_wav(char *song) {
     SDL_CloseAudioDevice(*deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
-    
+
     shmdt(seconds); // MAKE THESE VARS GLOBAL SO YOU CAN ALWAYS ACCESS AND DELETE
     shmdt(wavSpec);
     shmdt(wavLength);
@@ -352,7 +352,7 @@ int play_wav(char *song) {
 int initialize(int argc, char **argv) {
     printf("Starting initialization\n");
     //FILE *file = fopen("data.txt", "wb+");
-    int fd = open("data.txt", O_CREAT | O_RDWR | O_APPEND);
+    int fd = open("data.txt", 0664, O_CREAT | O_RDWR | O_APPEND);
     /* if (file == NULL) {
       printf("Failed to open data.txt\n");
       exit(-1);
@@ -380,8 +380,9 @@ int initialize(int argc, char **argv) {
     //int err = fwrite(song_data, sizeof(struct song_info), BUFFER_SIZE, file);
     //if (!err)
     //  printf("Error: %s\n", strerror(errno));
+     // JASON ERROR LOOK AT 
     int err = write(fd, song_data, BUFFER_SIZE * sizeof(struct song_info));
-    if (!err) 
+    if (!err)
       printf("Error: %s\n", strerror(errno));
     printf("Hopefully wrote something\n");
     struct song_info *cpy[BUFFER_SIZE]; //= calloc(BUFFER_SIZE, sizeof(struct song_info));
