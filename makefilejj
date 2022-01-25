@@ -1,6 +1,6 @@
 all: player adder
 	
-player:	player.o playerhelpers.o
+player:	player.o playerhelpers.o cJSON.o
 	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o
 
 adder: adder.o adderhelpers.o  cJSON.o
@@ -20,6 +20,7 @@ adderhelper.o: adderhelpers.c adderhelpers.h playerhelpers.h
 
 cJSON.o: cJSON.c cJSON.h
 	gcc -c cJSON.c
+
 clean:
 	-rm -rf *.o
 	-rm -rf *.run

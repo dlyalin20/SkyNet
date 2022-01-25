@@ -5,3 +5,4 @@ Daniel; 11:30 AM, Thursday, January 20; Organization and makefile
 Daniel; 10:06 PM, Friday, January 21; Began working on lyric api, including python file, parsing file metadata, and running py from c
 Daniel; 7:37 PM; Saturday, January 22; Finished pausing and quitting songs
 Daniel; 10:10 PM, Saturday, Januart 22; Finished half of playlist and init functionality
+Daniel; 3:34 PM, Tuesday, January 25; Added mac compatibility for server funcs

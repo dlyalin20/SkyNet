@@ -371,6 +371,8 @@ int add_song_to_queue(const char * path){
   write(queue, &(tmp->seconds), sizeof(tmp->seconds));
   printf("Added %s to queue\n", tmp->title);
   sb.sem_op = 1; //set the operation to up
+
+  return 0;
 }
 int add_playlist_to_queue(const char * name){
   int semd = create_sema();
@@ -387,11 +389,13 @@ int add_playlist_to_queue(const char * name){
   stat("queue", &st);
   int queue_size = st.st_size;
   char x[playlist_size];
-  printf("Read %d bytes\n", read(playlist, x, playlist_size));
-  printf("Wrote %d bytes\n", write(queue, x, playlist_size));
+  printf("Read %zd bytes\n", read(playlist, x, playlist_size));
+  printf("Wrote %zd bytes\n", write(queue, x, playlist_size));
 
   printf("Added playlist %s to queue\n", name);
   sb.sem_op = 1; //set the operation to up
+
+  return 0;
 }
 
 int clear_queue(){
@@ -404,4 +408,5 @@ int clear_queue(){
   fclose(hold);
   printf("Cleared Queue\n");
   sb.sem_op = 1; //set the operation to up
+  return 0;
 }
