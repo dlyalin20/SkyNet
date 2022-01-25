@@ -1,0 +1,30 @@
+notes: our server relies on file sharing in order to function
+clients push their music files to the server when they request to add a song
+to the queue. The server then saves it in ServerSongs which is wiped every
+time the server is started in order to avoid redundant file names.
+
+Every 5 seconds, clients ask the server for the number of songs in the queue
+and what is the title of the first song in the queue. If a client finds that
+they are missing a song, they send a request to the server. The server
+then sends the filedata and queuedata, creating a mirror queue to the server's
+queue. This allows us to still use player.run completely the same as before
+
+To handle these new capabilities, we use two new executable files
+
+BIG WORK IN PROGRESS, working on file sharing rn
+
+Server.run + AdderClient.run
+These two programs talk to each other, AdderClient uses adder.run through
+excepvp
+
+MVP 3 protocals in total all client to server
+- Add this song
+- Get that song
+- Get Queue
+
+Typical Use:
+One person runs Server.run
+Each person in the group share use AdderClient.run in order to talk to the
+server.
+Each person in the group uses Player.run in order to play the queue mirrored
+from the server.

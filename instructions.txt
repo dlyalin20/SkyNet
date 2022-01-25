@@ -1,0 +1,47 @@
+Some notes:
+All songs must by .wav files
+
+executable: player.run
+-Description: handles playing of sound
+-list_of_valid_commands
+>> ./player.run -play [song path]
+Plays a single song
+
+>>./player.run -playplaylist [playlist name]
+Plays a pre-created playlist
+
+>>./player.run -playqueue
+Plays the songs in the queue.
+Must have at least one song in the queue.
+When queue becomes empty it waits for more songs to be added.
+
+>> Any other combination of launching, ./player.run
+Prints out a list of valid commands {WORK IN PROGRESS}
+
+executable: adder.run
+-Description: handles setup of playlist and queue management
+-list_of_valid_commands
+>> -makeplaylistsimple
+Creates a playlist from songs in the current working directory
+
+>> -makeplaylist [path] {WORK IN PROGRESS}
+Creates a playlist from a directory anywhere in the file system
+
+>>-addplaylisttoqueue [playlist name]
+Copies all songs in a playlist over into the queue
+Sets up the Queue if not setup already
+
+>>-addsongtoqueue [path]
+Adds a single song to the queue
+
+>> -clearqueue
+Clears the queue
+
+>> Any other combination of launching, ./adder.run
+Prints out a list of valid commands {WORK IN PROGRESS}
+
+Planned usage for solo listening:
+On one terminal tab, play songs using player.run commands
+exit any command with ctrl+c
+On another terminal tab, increase playing capabilities
+using adder.run commands
