@@ -3,7 +3,7 @@
 
 // functions
 int play_wav(char *song);
-int play_playlist(char *playlist_name);
-
+int play_playlist(const char *playlist_name);
+void play_queue();
 
 #endif

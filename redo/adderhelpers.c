@@ -333,3 +333,56 @@ void sort_genre(struct song_info **arr, int size){
         strcpy(arr[j + 1]->genre, key);
     }
 }
+
+int create_sema(){
+  // create semaphore
+  int v, r;
+  int semd = semget(QUEUEKEY, 1, IPC_CREAT | IPC_EXCL | 0644);
+  if (semd == -1) {
+    // printf("error %d: %s\n", errno, strerror(errno));
+    semd = semget(QUEUEKEY, 1, 0);
+    v = semctl(semd, 0, GETVAL, 0);
+    // printf("semctl returned: %d\n", v);
+  }
+  else {
+    union semun us;
+    us.val = 1;
+    r = semctl(semd, 0, SETVAL, us);
+    // printf("semctl returned: %d\n", r);
+  }
+  return semd;
+}
+
+int add_playlist_to_queue(const char * name){
+  int semd = create_sema();
+  struct sembuf sb;
+  sb.sem_num = 0;
+  sb.sem_flg = SEM_UNDO;
+  sb.sem_op = -1; //setting the operation to down
+  // NOTE you cannot use append mode when using sendfile();
+  int queue = open("queue", O_WRONLY | O_APPEND | O_CREAT, 0664);
+  int playlist = open(name, O_RDONLY);
+  struct stat st;
+  stat(name, &st);
+  int playlist_size = st.st_size;
+  stat("queue", &st);
+  int queue_size = st.st_size;
+  char x[playlist_size];
+  printf("Read %d bytes\n", read(playlist, x, playlist_size));
+  printf("Wrote %d bytes\n", write(queue, x, playlist_size));
+
+  printf("Added playlist %s to queue\n", name);
+  sb.sem_op = 1; //set the operation to up
+}
+
+int clear_queue(){
+  int semd = create_sema();
+  struct sembuf sb;
+  sb.sem_num = 0;
+  sb.sem_flg = SEM_UNDO;
+  sb.sem_op = -1; //setting the operation to down
+  FILE * hold = fopen("queue", "w");
+  fclose(hold);
+  printf("Cleared Queue\n");
+  sb.sem_op = 1; //set the operation to up
+}

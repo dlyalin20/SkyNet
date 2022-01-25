@@ -34,7 +34,7 @@ int main(int argc, char const *argv[]) {
      play_wav(song);
     }
   }else if(!strcmp(argv[1], "-playqueue")){
-
+    play_queue();
   }else if(!strcmp(argv[1], "-playplaylist")){
     play_playlist(argv[2]);
   }else{

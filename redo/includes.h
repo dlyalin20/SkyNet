@@ -18,6 +18,15 @@
 #define IDKey 500
 #define maxKey 600
 
+#define QUEUEKEY 24602
+
+union semun {
+   int              val;    // Value for SETVAL
+   struct semid_ds *buf;    // Buffer for IPC_STAT, IPC_SET *\/
+   unsigned short  *array;  // Array for GETALL, SETALL *\/ */
+   struct seminfo  *__buf;  // Buffer for IPC_INFO */
+                               // (Linux-specific) */
+};
 // standard includes
 #include "cJSON.h"
 #include <time.h>
@@ -41,6 +50,8 @@
 #include <SDL2/SDL.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/sendfile.h>
+
 
 
 // structs

@@ -18,4 +18,9 @@ int add_to_playlist();
 void sort_title(struct song_info **arr, int size);
 void sort_artist(struct song_info **arr, int size);
 void sort_genre(struct song_info **arr, int size);
+// simple playlist only
+int add_playlist_to_queue(const char * name);
+int clear_queue();
+int create_sema();
+
 #endif

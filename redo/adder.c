@@ -20,15 +20,27 @@ int main(int argc, char const *argv[]) {
     list_of_valid_commands();
     exit(0);
   }
-    if (!strcmp(argv[1], "-makeplaylist")) {
+  // make playlist from any directory: working on intergrating it
+   if (!strcmp(argv[1], "-makeplaylist")) {
       printf("Creating playlist\n");
       make_playlist(argv[2]);
-      // make playlist from current working directory
-    }else if (!strcmp(argv[1], "-makeplaylistsimple")) {
+    }else
+    // make playlist from current working directory
+    if (!strcmp(argv[1], "-makeplaylistsimple")) {
       printf("Creating simpled playlist\n");
       make_playlist_simple();
-      // --
-    }else{
+    }else
+    // add playlist to queue
+    if (!strcmp(argv[1], "-addplaylisttoqueue")){
+      printf("Playlist Name: %s\n", argv[2]);
+      add_playlist_to_queue(argv[2]);
+    }else
+    // clear_queue
+    if (!strcmp(argv[1], "-clearqueue")){
+      clear_queue();
+    }
+
+    else{
     printf("%s is Not a valid command\n", argv[1]);
     list_of_valid_commands();
     exit(0);

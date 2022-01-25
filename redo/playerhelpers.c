@@ -69,43 +69,73 @@ int play_wav(char *song) {
 
     }
 
-    //SDL_EnableUNICODE(1);
-
-    /* int err = 0;
-    SDL_Event event;
-    while (!err) {
-      printf("here\n");
-       err = SDL_WaitEventTimeout(&event, duration_in_milliseconds);
-       if (err) {
-          printf("event!\n");
-         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
-           printf("space!\n");
-           if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PLAYING) {
-             printf("unpausing\n");
-             SDL_PauseAudioDevice(deviceID, 0);
-           }
-           else {
-             printf("pausing!\n");
-             SDL_PauseAudioDevice(deviceID, 1);
-           }
-
-       }
-       err = 0;
-      }
-      else {
-        break;
-      }
-    } */
-
-    //SDL_Delay(duration_in_milliseconds);
-
     SDL_CloseAudioDevice(deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
 
     return 0;
 }
-int play_playlist(char *playlist_name) {
+
+void play_queue(){
+  struct stat stats;
+  int i;
+  char path[BUFFER_SIZE], artist[BUFFER_SIZE], title[BUFFER_SIZE], genre[BUFFER_SIZE];
+  float seconds;
+  FILE *file;
+  while (1) {
+    file = fopen("queue", "r");
+    fseek(file, 0, SEEK_SET);
+    if (file == NULL) {
+      printf("Error Opening Queue: %s\n", strerror(errno));
+    }
+    struct sembuf sb;
+    sb.sem_num = 0;
+    sb.sem_flg = SEM_UNDO;
+    sb.sem_op = -1; //setting the operation to down
+
+    int freadsize = fread(&path, sizeof(char), BUFFER_SIZE, file);
+    if (freadsize < BUFFER_SIZE){
+      sb.sem_op = 1; //set the operation to up
+      sleep(1);
+      continue;
+    }
+    fread(&artist, sizeof(char),BUFFER_SIZE , file);
+    fread(&title, sizeof(char), BUFFER_SIZE, file);
+    fread(&genre, sizeof(char), BUFFER_SIZE, file);
+    fread(&seconds, sizeof(float), 1, file);
+    int size_of_song = ftell(file);
+    // calculating the size of the rest of the file
+    fseek(file, 0, SEEK_END);
+    int filesize = ftell(file);
+    int rest_of_file_size = filesize - size_of_song;
+    // read the queue minus the first song
+    fseek(file, size_of_song, SEEK_SET);
+    void * x = malloc(rest_of_file_size);
+    fread(x, sizeof(char), rest_of_file_size, file);
+    // overwrite the file
+    fclose(file);
+    file = fopen("queue", "w+");
+    fseek(file, 0, SEEK_SET);
+    fwrite(x, sizeof(char), rest_of_file_size, file);
+    fclose(file);
+    free(x);
+    sb.sem_op = 1; //set the operation to up
+
+    struct song_info *tmp = calloc(1, sizeof(struct song_info));
+    strcpy(tmp->path, path);
+    strcpy(tmp->artist, artist);
+    strcpy(tmp->title, title);
+    strcpy(tmp->genre, genre);
+    tmp->seconds = seconds;
+    printf("Playing %s by %s\n", tmp->title, tmp->artist);
+    printf("Duration: %f seconds\n", tmp->seconds);
+    printf("PATH: %s\n", tmp->path);
+    play_wav(tmp->path);
+    free(tmp);
+  }
+}
+
+int play_playlist(const char *playlist_name) {
   struct stat stats;
   FILE *file = fopen(playlist_name, "rb+");
   if (file == NULL) {
