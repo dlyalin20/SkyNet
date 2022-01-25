@@ -46,9 +46,10 @@ int main(int argc, char *argv[]) {
 
   else if (!strcmp(argv[1], "test")) {
 
-    //make_playlist(); // test this next
+    //make_playlist(); 
     //play_playlist("Test");
     //add_to_playlist();
+    play_sorted();
 
   }
 
