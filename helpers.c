@@ -1,84 +1,16 @@
 #include "includes.h"
 
-/* static void sighandler(int sig) {
-
-  if (sig == SIGINT) {
-
-    int shmdID = shmget(IDKey, sizeof(SDL_AudioDeviceID), 0640);
-    SDL_AudioDeviceID *deviceID;
-    deviceID = shmat(shmdID, 0, 0);
-
-    SDL_PauseAudioDevice(*deviceID, 1);
-
-    printf("Paused audio device (hopefully without killing a speaker, sigh)\n");
-
-    shmdt(deviceID);
-
-    exit(0);
-
-
-  }
-
-  if (sig == SIGINT) {
-
-    printf("Caught!\n");
-
-    int shmdBuf = shmget(bufKey, sizeof(Uint8 *), 0640);
-    Uint8 *wavBuffer;
-    wavBuffer = shmat(shmdBuf, 0, 0);
-
-    int shmdID = shmget(IDKey, sizeof(SDL_AudioDeviceID), 0640);
-    SDL_AudioDeviceID *deviceID;
-    deviceID = shmat(shmdID, 0, 0);
-
-    printf("Made it past initializations\n");
-
-    SDL_CloseAudioDevice(*deviceID);
-    printf("Issue is not with deviceID\n");
-    //SDL_FreeWAV(wavBuffer);
-    printf("Issue is not with wavBuffer\n");
-    SDL_Quit();
-
-    printf("made it past closing audio\n");
-
-    //sleep(3);
-
-    shmdt(wavBuffer);
-    
-    printf("hopefully we have closed audio!\n");
-
-    int *seconds;
-    int shmdSec = shmget(secKey, sizeof(int), IPC_CREAT | 0640);
-    seconds = shmat(shmdSec, 0, 0);
-
-    printf("Milliseconds played: %d\n", *seconds);
-
-    shmdt(seconds);
-
-    printf("Error: %s\n", strerror(errno));
-
-    exit(0);
-
-  }
-
-} */
-
 // worry about parsing later
 int logic_controller(char *buffer) {
 
-    //signal(SIGINT, sighandler);
 
     char **array = calloc(5, sizeof(char *));
 
     split(buffer, array);
 
-    // printf("0: %s\t1: %s\n", array[0], array[1]);
-
     if (!strcmp(array[0], "-play")) {
 
       char *extension = strrchr(array[1], '.');
-
-      // printf("ext: %s\n", extension+1);
 
       if (!strcmp(extension+1, "wav")) {
         play_wav(array[1]);
@@ -86,21 +18,11 @@ int logic_controller(char *buffer) {
 
     }
 
+    free(array);
+
     return 0;
 
 }
-
-/* int launch() {
-
-    shmget(secKey, sizeof(int), IPC_CREAT | 0640);
-    shmget(specKey, sizeof(SDL_AudioSpec), IPC_CREAT | 0640);
-    shmget(lenKey, sizeof(Uint32), IPC_CREAT | 0640);
-    shmget(bufKey, sizeof(Uint8 *), IPC_CREAT | 0640);
-    shmget(IDKey, sizeof(SDL_AudioDeviceID), IPC_CREAT | 0640);
-    shmget(maxKey, sizeof(int), IPC_CREAT | 0640);
-
-    return 0;
-} */
 
 int play_wav(char *song) {
 
@@ -123,9 +45,6 @@ int play_wav(char *song) {
 
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
-    printf("Audio Device ID: %d\n", deviceID);
-    printf("%s\n", SDL_GetError());
-
     int success = SDL_QueueAudio(deviceID, wavBuffer, wavLength);
     SDL_PauseAudioDevice(deviceID, 0);
 
@@ -147,11 +66,9 @@ int play_wav(char *song) {
 
       err = select(STDIN_FILENO+1, &read_fds, NULL, NULL, timer);
       if (err) { //select triggered
-        printf("err triggered\n");
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
           fgets(buffer, sizeof(buffer), stdin);
         }
-        printf("%s\n", buffer);
         if (!strcmp(buffer, " \n")) { // space pressed
 
           if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PLAYING)
@@ -171,239 +88,58 @@ int play_wav(char *song) {
 
     }
 
-    //SDL_EnableUNICODE(1);
-
-    /* int err = 0;
-    SDL_Event event;
-    while (!err) {
-      printf("here\n");
-       err = SDL_WaitEventTimeout(&event, duration_in_milliseconds);
-       if (err) {
-          printf("event!\n");
-         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE) {
-           printf("space!\n");
-           if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PLAYING) {
-             printf("unpausing\n");
-             SDL_PauseAudioDevice(deviceID, 0);
-           }
-           else {
-             printf("pausing!\n");
-             SDL_PauseAudioDevice(deviceID, 1);
-           }
-
-       }
-       err = 0;
-      }
-      else {
-        break;
-      }
-    } */
-
-    //SDL_Delay(duration_in_milliseconds);
-
     SDL_CloseAudioDevice(deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
 
+    fclose(fp);
+    free(timer);
+    free(wav_header);
+
     return 0;
 }
-
-/* int play_wav(char *song) {
-
-    signal(SIGINT, sighandler);
-
-    FILE *fp = fopen(song, "rb");
-
-    struct WAV *wav_header = (struct WAV *) calloc(1, sizeof(struct WAV));
-
-    fread(wav_header, 1, sizeof(struct WAV), fp);
-
-    float duration_in_seconds = (float) wav_header->chunk_size / wav_header->byte_rate;
-    float duration_in_milliseconds = 1000 * duration_in_seconds;
-
-    SDL_Init(SDL_INIT_AUDIO);
-
-    int shmdSec = shmget(secKey, sizeof(int), 0640);
-    int shmdSpec = shmget(specKey, sizeof(SDL_AudioSpec), 0640);
-    int shmdLen = shmget(lenKey, sizeof(Uint32), 0640);
-    int shmdBuf = shmget(bufKey, sizeof(Uint8 *), 0640);
-    int shmdID = shmget(IDKey, sizeof(SDL_AudioDeviceID), 0640);
-    int shmdMax = shmget(maxKey, sizeof(int), 0640);
-
-    int *seconds;
-    SDL_AudioSpec *wavSpec;
-    Uint32 *wavLength;
-    Uint8 *wavBuffer;
-    SDL_AudioDeviceID *deviceID;
-    int *millimax;
-
-    seconds = shmat(shmdSec, 0, 0);
-    wavSpec = shmat(shmdSpec, 0, 0);
-    wavLength = shmat(shmdLen, 0, 0);
-    printf("Made it through three\n");
-    wavBuffer = shmat(shmdBuf, 0, 0);
-    printf("Buffer\n");
-    deviceID = shmat(shmdID, 0, 0);
-    millimax = shmat(shmdMax, 0, 0);
-
-    *millimax = duration_in_milliseconds;
-    
-
-    SDL_LoadWAV(song, wavSpec, &wavBuffer, wavLength);
-
-    *deviceID = SDL_OpenAudioDevice(NULL, 0, wavSpec, NULL, 0);
-
-    printf("Audio Device ID: %d\n", *deviceID);
-    printf("%s\n", SDL_GetError());
-
-    int success = SDL_QueueAudio(*deviceID, wavBuffer, *wavLength);
-    SDL_PauseAudioDevice(*deviceID, 0);
-
-    for (*seconds = 0; *seconds < duration_in_milliseconds; (*seconds)++) {
-      
-      SDL_Delay(1);
-
-    }
-    //SDL_Delay(duration_in_milliseconds);
-
-    SDL_CloseAudioDevice(*deviceID);
-    SDL_FreeWAV(wavBuffer);
-    SDL_Quit();
-    
-    shmdt(seconds); // MAKE THESE VARS GLOBAL SO YOU CAN ALWAYS ACCESS AND DELETE
-    shmdt(wavSpec);
-    shmdt(wavLength);
-    shmdt(wavBuffer);
-    shmdt(deviceID);
-
-    return 0;
-} */
-
-
-/* int unpause_wav() {
-
-  //signal(SIGINT, sighandler);
-
-  int shmdID = shmget(IDKey, sizeof(SDL_AudioDeviceID), 0640);
-  SDL_AudioDeviceID *deviceID;
-  deviceID = shmat(shmdID, 0, 0);
-
-  printf("deviceID obtained\n");
-
-  int shmdMax = shmget(maxKey, sizeof(int), 0640);
-  int *maxMilli;
-  maxMilli = shmat(shmdMax, 0, 0);
-
-  printf("maxMilli obtained: %d\n", *maxMilli);
-
-  int shmdSec = shmget(secKey, sizeof(int), 0640);
-  int *seconds;
-  seconds = shmat(shmdSec, 0, 0);
-
-  printf("seconds obtained: %d\n", *seconds);
-
-  SDL_PauseAudioDevice(*deviceID, 0);
-
-  printf("unpaused\n");
-
-  for ( ; (*seconds) < (*maxMilli); (*seconds)++) {
-
-    SDL_Delay(1);
-
-  }
-
-  printf("done playing\n");
-
-  int shmdBuf = shmget(bufKey, sizeof(Uint8 *), 0640);
-  Uint8 *wavBuffer;
-  wavBuffer = shmat(shmdBuf, 0, 0);
-
-  SDL_CloseAudioDevice(*deviceID);
-  SDL_FreeWAV(wavBuffer);
-
-  shmdt(seconds);
-  shmdt(maxMilli);
-  shmdt(wavBuffer);
-  shmdt(deviceID);
-
-  return 0;
-
-} */
-
-/* int shut_down() {
-
-
-    int shmdSec = shmget(secKey, sizeof(int), 0640);
-    int shmdSpec = shmget(specKey, sizeof(SDL_AudioSpec), 0640);
-    int shmdLen = shmget(lenKey, sizeof(Uint32), 0640);
-    int shmdBuf = shmget(bufKey, sizeof(Uint8 *), 0640);
-    int shmdID = shmget(IDKey, sizeof(SDL_AudioDeviceID), 0640);
-
-    shmctl(shmdSec, IPC_RMID, 0);
-    shmctl(shmdSpec, IPC_RMID, 0);
-    shmctl(shmdLen, IPC_RMID, 0);
-    shmctl(shmdBuf, IPC_RMID, 0);
-    shmctl(shmdID, IPC_RMID, 0);
-
-    return 0;
-
-} */
 
 int initialize(int argc, char **argv) {
     printf("Starting initialization\n");
     FILE *file = fopen("data.txt", "wb+");
     char *path = calloc(BUFFER_SIZE, sizeof(char));
-    char *tmp = calloc(BUFFER_SIZE, sizeof(char));
-    getcwd(tmp, BUFFER_SIZE);
-    printf("%s\n", tmp);
-    strcpy(path, tmp);
-    // write(fd, path, strlen(path));
-    printf("%s\n", path);
+    getcwd(path, BUFFER_SIZE);
     struct song_info *song_data = calloc(sizeof(struct song_info), BUFFER_SIZE);
     find_files(song_data, path);
-    printf("Exited find_files()\n");
-    printf("T1: %s\n", song_data[0].title);
-    printf("T2: %s\n", song_data[1].title);
-    printf("P1: %s\n", song_data[0].path);
-    printf("P2: %s\n", song_data[1].path);
-    printf("Struct Path in finding: %p\n", song_data);
-    printf("Struct Size in Finding: %lu\n", sizeof(song_data));
-    int err, i;
+    int i;
     int num_full = 0;
-    // err = fwrite(song_data, sizeof(struct song_info) * BUFFER_SIZE, 1, file);
     for (i = 0; i < BUFFER_SIZE; i++) {
       if (strcmp(song_data[i].path, "")) {
         fwrite(song_data[i].path, BUFFER_SIZE, 1, file);
         fwrite(song_data[i].artist, BUFFER_SIZE, 1, file);
         fwrite(song_data[i].title, BUFFER_SIZE, 1, file);
-        fwrite(&(song_data[i].seconds), sizeof(float), 1, file);
+        fwrite(song_data[i].genre, BUFFER_SIZE, 1, file);
+        fwrite(&(song_data[i].seconds), sizeof(song_data[i].seconds), 1, file);
         num_full++;
       }
       else
         break;
-      // err = fwrite((song_data[i]), sizeof(struct song_info), 1, file);
     }
-    if (err)
-      printf("Error Writing: %s\n", strerror(errno));
-    else
-      printf("Finished Writing\n");
-    printf("numfull: %d\n", num_full);
-    fseek(file, 0, SEEK_SET);
-    struct song_info *cpy = calloc(sizeof(struct song_info), BUFFER_SIZE);
+    free(song_data);
+    fclose(file);
+    free(path);
+    printf("Finished initializing\n");
+    return 0;
+      // NOTES FOR MYSELF BELOW
+    /* fseek(file, 0, SEEK_SET);
+    struct song_info cpy[BUFFER_SIZE];
     for (i = 0; i < num_full; i++) {
-      char *path = calloc(BUFFER_SIZE, sizeof(char));
-      fread(path, BUFFER_SIZE, 1, file);
+      char path[BUFFER_SIZE];
+      fread(&path, BUFFER_SIZE, 1, file);
       printf("Path Read: %s\n", path);
-      char *artist = calloc(BUFFER_SIZE, sizeof(char));
-      fread(artist, BUFFER_SIZE, 1, file);
-      char *title = calloc(BUFFER_SIZE, sizeof(char));
-      fread(title, BUFFER_SIZE, 1, file);
-      char *genre = calloc(BUFFER_SIZE, sizeof(char));
-      fread(genre, BUFFER_SIZE, 1, file);
+      char artist[BUFFER_SIZE];
+      fread(&artist, BUFFER_SIZE, 1, file);
+      char title[BUFFER_SIZE];
+      fread(&title, BUFFER_SIZE, 1, file);
+      char genre[BUFFER_SIZE];
+      fread(&genre, BUFFER_SIZE, 1, file);
       float seconds = 0;
-      char *sectxt = calloc(sizeof(float), sizeof(char));
-      fread(sectxt, sizeof(float), 1, file);
-      seconds = atof(sectxt);
+      fread(&seconds, sizeof(float), 1, file);
       struct song_info *tmp = calloc(sizeof(struct song_info), 1);
       strcpy(tmp->path, path);
       strcpy(tmp->artist, artist);
@@ -412,14 +148,14 @@ int initialize(int argc, char **argv) {
       tmp->seconds = seconds;
       cpy[i] = *tmp;
     }
-   // err = fread(cpy, sizeof(struct song_info) * BUFFER_SIZE, 1, file);
+    printf("S1: %f\n", cpy[0].seconds);
+    printf("T1: %s\n", cpy[0].title);
+    printf("S3: %f\n", cpy[2].seconds);
+    printf("G3: %s\n", cpy[2].genre);
     if (err)
       printf("Error Reading: %s\n", strerror(errno));
     else
-      printf("Finished reading\n");
-    printf("%s\n", cpy[0].title);
-    printf("%s\n", cpy[1].title);
-    return 0;
+      printf("Finished reading\n"); */
 }
 
 void shuffle(char **array, size_t n)

@@ -13,14 +13,15 @@ float get_duration(char *filename) {
     float duration_in_seconds = (float) wav_header->chunk_size / wav_header->byte_rate;
     float duration_in_milliseconds = 1000 * duration_in_seconds;
 
+    fclose(fp);
+    free(wav_header);
+
     return duration_in_milliseconds;
 
 }
 
 struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
-    printf("Began get_song_info for wav\n");
-    printf("Info: %p\n", info);
     char *cmd = "exiftool";
     char *args[] = {cmd, "-charset", "filename=utf8", "-charset", "exif=utf8", "-charset", "iptc=utf8", "-use", "mwg", "-m", "-G0:1", "-wm", "wcg", "-a", "-j", "-struct", "-w!", "\%d\%f.json", "-All", PATH, NULL};
 
@@ -35,7 +36,6 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     else {
 
         wait(NULL);
-        // dup2(backup_stdout, STDOUT_FILENO);
 
     }
 
@@ -50,8 +50,6 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
     stat(pathcopy, &stats);
 
-    printf("File Mode From Stat: %hu\n", stats.st_mode);
-
     char *buffer = calloc(stats.st_size, sizeof(char));
 
     FILE *fd = fopen(pathcopy, "r");
@@ -60,97 +58,62 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
     fread(buffer, 1, stats.st_size-3, fd);
 
-    //printf("Buffer: %s\n", buffer);
-
-    // printf("here\n");
-
     cJSON *song_json = cJSON_Parse(buffer);
 
     cJSON *cTitle = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Title");
 
-    if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) {
+    /* if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) {
 
         printf("Song Title: %s\n", cTitle->valuestring);
 
-    }
+    } */
 
     cJSON *cArtist = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Artist");
 
-    if (cJSON_IsString(cArtist) && (cArtist->valuestring != NULL)) {
+    /* if (cJSON_IsString(cArtist) && (cArtist->valuestring != NULL)) {
 
         printf("Song Artist: %s\n", cArtist->valuestring);
 
-    }
+    } */
 
     cJSON *cGenre = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Genre");
 
-    if (cJSON_IsString(cGenre) && (cGenre->valuestring != NULL)) {
+    /* if (cJSON_IsString(cGenre) && (cGenre->valuestring != NULL)) {
 
       printf("Song Genre: %s\n", cGenre->valuestring);
 
-    }
-
-    printf("PATH: %s\n", PATH);
-    //printf("%s\n", info->path);
-   //printf("%d\n", info->artist);
+    } */
     strcpy(info->artist, cArtist->valuestring);
-    printf("Added Artist: %s\n", info->artist);
     strcpy(info->path, PATH);
-    printf("Added Path: %s\n", info->path);
     strcpy(info->title, cTitle->valuestring);
-    printf("Added Title: %s\n", info->title);
     strcpy(info->genre, cGenre->valuestring);
-    printf("Added Genre: %s\n", info->genre);
     info->seconds = get_duration(PATH);
-    printf("Added Duration: %f\n", info->seconds);
 
-    printf("Path: %s\nArtist: %s\nTitle: %s\nGenre: %s\nDuration: %f\n", info->path, info->artist, info->title, info->genre, info->seconds);
-
-    //printf("%s by %s\n", song_info[1], song_info[0]);
 
     remove(pathcopy);
-
-    // int fd = open("song_data.json", O_CREAT | O_WRONLY);
-
-    // int backup_stdout = dup( STDOUT_FILENO );
-
-    // dup2(fd, STDOUT_FILENO);
-
-    // system("ls > song_data.txt");
+    free(pathcopy);
+    free(buffer);
 
     return info;
 
 }
 
 struct song_info * find_files(struct song_info *song_data, char * path) {
-
-  printf("Starting song search\n");
   DIR * d = opendir(path);
   struct dirent *entry;
 
   int i = 0;
   while ((entry = readdir(d))){
     if (entry->d_type == DT_REG){
-      printf("%s\n", entry->d_name);
       char * ext = strrchr(entry->d_name,'.');
-      printf("%s\n", ext);
       if (ext != NULL && !strcmp(ext,".wav")){
-        struct song_info tmp; //= calloc(1, sizeof(struct song_info));
-        printf("Tmp: %p\n", &tmp);
-        get_song_info(&tmp, entry->d_name);
-        printf("Made it past get_song_info\n");
-        printf("Path: %s\nArtist: %s\nTitle: %s\nGenre: %s\nDuration: %f\n", tmp.path, tmp.artist, tmp.title, tmp.genre, tmp.seconds);
-        song_data[i] = tmp;
-        printf("Path: %s\nArtist: %s\nTitle: %s\nGenre: %s\nDuration: %f\n", song_data[i].path, song_data[i].artist, song_data[i].title, song_data[i].genre, song_data[i].seconds);
+        struct song_info *tmp = calloc(1, sizeof(struct song_info));
+        get_song_info(tmp, entry->d_name);
+        song_data[i] = *tmp;
         i++;
       }
     }
   }
-  printf("Exited finding while loop\n");
-  printf("%s\n", song_data[0].path);
-  printf("%s\n", song_data[1].path);
-  printf("Struct Path in finding: %p\n", song_data);
-  printf("Struct Size in Finding: %lu\n", sizeof(song_data));
   return song_data;
 }
 
@@ -176,6 +139,8 @@ struct songs * create_song(char *title) {
     strcpy(song->name, title);
     song->next = NULL;
 
+
+    free(song);
     return song;
 
 }

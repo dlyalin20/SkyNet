@@ -4,4 +4,5 @@ Jason; 9:59 AM, Thursday, January 20; Added shell program that will read keyboar
 Daniel; 11:30 AM, Thursday, January 20; Organization and makefile
 Daniel; 10:06 PM, Friday, January 21; Began working on lyric api, including python file, parsing file metadata, and running py from c
 Daniel; 7:37 PM; Saturday, January 22; Finished pausing and quitting songs
-Daniel; 10:10 PM, Saturday, Januart 22; Finished half of playlist and init functionality
+Daniel; 10:10 PM, Saturday, January 22; Finished half of playlist and init functionality
+Daniel; 7:10 PM, Monday, January 24; Created song structs, finished initalization, find_files, get_song_info
