@@ -5,11 +5,12 @@
 Holds functions that relate to song storage
 */
 
+// takes int; handles signal by killing jobs; returns void
 static void sighandler(int sigint) {
 
   if (sigint == SIGINT) {
     printf("Ctrl+C sensed; Quitting\n");
-    kill(0, SIGKILL);
+    kill(0, SIGKILL); // kills all jobs
     exit(0);
   }
   if (sigint == SIGSTOP) {
@@ -20,11 +21,13 @@ static void sighandler(int sigint) {
 
 }
 
+// takes file name; returns duration of song as float
 float get_duration(char *filename) {
 
     signal(SIGINT, &sighandler);
+    signal(SIGSTOP, &sighandler);
 
-    FILE *fp = fopen(filename, "rb");
+    FILE *fp = fopen(filename, "rb"); // opens file for reading in binary
     if (fp == NULL) {
       printf("Error Opening File for Duration: %s\n", strerror(errno));
       exit(-1);
@@ -32,14 +35,14 @@ float get_duration(char *filename) {
 
     struct WAV *wav_header = (struct WAV *) calloc(1, sizeof(struct WAV));
 
-    int err = fread(wav_header, 1, sizeof(struct WAV), fp);
+    int err = fread(wav_header, 1, sizeof(struct WAV), fp); // reads in wav header
     if (err != sizeof(struct WAV)) {
       printf("Error Reading Wav_Header: %s\n", strerror(errno));
       exit(-1);
     }
 
     float duration_in_seconds = (float) wav_header->chunk_size / wav_header->byte_rate;
-    float duration_in_milliseconds = 1000 * duration_in_seconds;
+    float duration_in_milliseconds = 1000 * duration_in_seconds; // algo for calculating duration
 
     fclose(fp);
     free(wav_header);
@@ -48,16 +51,19 @@ float get_duration(char *filename) {
 
 }
 
+// takes song_info struct pointer and filepath; reads file metadata into struct; returns struct
 struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
     signal(SIGINT, &sighandler);
+    signal(SIGSTOP, &sighandler);
 
     int err;
     char *cmd = "exiftool";
+    // all args for getting json file of metadata using exiftool
     char *args[] = {cmd, "-charset", "filename=utf8", "-charset", "exif=utf8", "-charset", "iptc=utf8", "-use", "mwg", "-m", "-G0:1", "-wm", "wcg", "-a", "-j", "-struct", "-w!", "\%d\%f.json", "-All", PATH, NULL};
     int wstatus;
     int pid = fork();
-    if (!pid) { // child process
+    if (!pid) { // child process for using execvp
         err = execvp(cmd, args);
         if (err) {
           printf("Error Executing Command for JSON: %s\n", strerror(errno));
@@ -68,7 +74,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     else {
         wait(&wstatus);
         if (WEXITSTATUS(wstatus)) {
-          exit(-1);
+          exit(-1); // if failed 
         }
     }
 
@@ -77,7 +83,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     strcpy(pathcopy, PATH);
     char *lastExt = strrchr(pathcopy, '.');
     *lastExt = '\0';
-    strcat(pathcopy, ".json");
+    strcat(pathcopy, ".json"); // for opening json file (name.wav -> name.json)
     stat(pathcopy, &stats);
     char *buffer = calloc(stats.st_size, sizeof(char));
     FILE *fd = fopen(pathcopy, "r");
@@ -87,9 +93,9 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     }
     fread(buffer, 1, 1, fd);
     fread(buffer, 1, stats.st_size-3, fd);
-    cJSON *song_json = cJSON_Parse(buffer);
+    cJSON *song_json = cJSON_Parse(buffer); // reads json to buffer and then to cJSON struct
 
-    // jason workaround ----
+    // jason workaround ---- reads fields from cJSON struct into song_info struct
     cJSON *cTitle = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Title");
     char unknownstring[] = "Unknown";
     if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) 
@@ -122,49 +128,38 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
 
 }
 
-struct song_info * find_files(struct song_info *song_data, char * path) {
-
-  signal(SIGINT, &sighandler);
-
-  DIR * d = opendir(path);
-  struct dirent *entry;
-
-  int i = 0;
-  while ((entry = readdir(d))){
-    if (entry->d_type == DT_REG){
-      char * ext = strrchr(entry->d_name,'.');
-      if (ext != NULL && !strcmp(ext,".wav")){
-        struct song_info *tmp = calloc(1, sizeof(struct song_info));
-        get_song_info(tmp, entry->d_name);
-        song_data[i] = *tmp;
-        i++;
-      }
-    }
-  }
-  return song_data;
-}
-
+ // takes playlist name as string; deletes playlist file; returns int
 int delete_playlist(char *playlist_name) {
 
     signal(SIGINT, &sighandler);
-    return remove(playlist_name);
+    signal(SIGSTOP, &sighandler);
+    return remove(playlist_name); // removes file
 
 }
 
+// takes char buffer and file stream; writes buffer contents to file; returns null
 void s2f(char *buffer, FILE *file) {
 
+  signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
+
   struct song_info *tmp = calloc(1, sizeof(struct song_info));
-  get_song_info(tmp, buffer);
+  get_song_info(tmp, buffer); // fills song_info with song info
   fwrite(tmp->path, BUFFER_SIZE, 1, file);
   fwrite(tmp->artist, BUFFER_SIZE, 1, file);
   fwrite(tmp->title, BUFFER_SIZE, 1, file);
   fwrite(tmp->genre, BUFFER_SIZE, 1, file);
-  fwrite(&(tmp->seconds), sizeof(tmp->seconds), 1, file);
+  fwrite(&(tmp->seconds), sizeof(tmp->seconds), 1, file); // writes song_info struct to file
   free(tmp);
 
 }
 
+// takes string buffer; prompts for playlist name; returns null
 void get_pname(char *buffer) {
+
+  signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
+
   printf("Please input playlist name, or 'exit': \n");
   read(STDIN_FILENO, buffer, BUFFER_SIZE);
   char *rem;
@@ -172,7 +167,11 @@ void get_pname(char *buffer) {
   rem[0] = '\0';
 }
 
+// takes string buffer; prompts for song name; returns null
 void get_sname(char *buffer) {
+
+    signal(SIGINT, &sighandler);
+    signal(SIGSTOP, &sighandler);
 
     printf("Please input a song to add, or type exit: \n");
     read(STDIN_FILENO, buffer, BUFFER_SIZE);
@@ -182,14 +181,16 @@ void get_sname(char *buffer) {
 
 }
 
+// takes null; makes playlist by prompting for songs; returns int
 int make_playlist_simple() { 
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-  get_pname(buffer);
+  get_pname(buffer); // prompts for playlist name
 
-  FILE *file = fopen(buffer, "wb+");
+  FILE *file = fopen(buffer, "wb+"); // opens for binary writing
 
   if (file == NULL) {
     printf("Error: %s\n", strerror(errno));
@@ -197,13 +198,13 @@ int make_playlist_simple() {
   }
 
   struct stat stats;
-  while (1) {
-    get_sname(buffer);
-    char * ext = strrchr(buffer,'.');
+  while (1) { // loops until exit or error or signal
+    get_sname(buffer); // prompts for song name
+    char * ext = strrchr(buffer,'.'); // check for .wav
     if (!strcmp(buffer, "exit"))
       break;
     if (!stat(buffer, &stats) && ext != NULL && !strcmp(ext, ".wav")) {
-      s2f(buffer, file);
+      s2f(buffer, file); // writes song to file
     }
     else {
       printf("%s doesn't exist\n", buffer);
@@ -219,9 +220,11 @@ int make_playlist_simple() {
 
 }
 
+// takes null; makes a playlist; returns int
 int make_playlist(const char * path) {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   // copy target path
   char *filelocation = calloc(BUFFER_SIZE, sizeof(char));
@@ -264,28 +267,30 @@ int make_playlist(const char * path) {
   return 0;
 }
 
+// takes null; adds song to playlist; returns int
 int add_to_playlist() {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-  get_pname(buffer);
+  get_pname(buffer); // prompts for playlist name
   if (!strcmp(buffer, "exit")) {
     free(buffer);
     exit(0);
   }
-  FILE *file = fopen(buffer, "wb+");
+  FILE *file = fopen(buffer, "wb+"); // opens for binary writing
   if (file == NULL) {
     printf("Error opening playlist: %s\n", strerror(errno));
     free(buffer);
     exit(-1);
   }
-  fseek(file, 0, SEEK_END);
-  get_sname(buffer);
+  fseek(file, 0, SEEK_END); // writing to end
+  get_sname(buffer); // prompts for song name
   struct stat stats;
-  char *ext = strrchr(buffer, '.');
+  char *ext = strrchr(buffer, '.'); // make sure .wav
   if (!stat(buffer, &stats) && ext != NULL && !strcmp(ext, ".wav")) {
-    s2f(buffer, file);
+    s2f(buffer, file); // writes song to file
   }
   else {
     printf("Error finding that song!\n");
@@ -296,9 +301,13 @@ int add_to_playlist() {
 
 }
 
+// takes playlist, file stream, and int pointer; reads all of playlist into file; returns null
 void p2f(struct song_info *playlist, FILE *file, int *i) {
 
-  int n;
+  signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
+
+  int n; // loops thru entire playlist
   for (n = 0; n < *i; n++) {
     fwrite(playlist[n].path, BUFFER_SIZE, sizeof(char), file);
     fwrite(playlist[n].artist, BUFFER_SIZE, sizeof(char), file);
@@ -309,35 +318,38 @@ void p2f(struct song_info *playlist, FILE *file, int *i) {
 
 }
 
+
+// takes null; removes song from playlist; returns null
 void remove_from_playlist() {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   char *buffer = calloc(BUFFER_SIZE, sizeof(char));
 
-  get_pname(buffer);
+  get_pname(buffer); // prompts for playlist
 
   if (!strcmp(buffer, "exit")) {
     free(buffer);
     exit(0);
   }
 
-  FILE *file = fopen(buffer, "rb");
+  FILE *file = fopen(buffer, "rb"); // opens for binary reading
 
   char *filename = calloc(BUFFER_SIZE, sizeof(char));
   strcpy(filename, buffer);
 
-  get_sname(buffer);
+  get_sname(buffer); // prompts for song name
 
   fseek(file, 0, SEEK_END);
   int bytsiz = ftell(file);
-  fseek(file, 0, SEEK_SET);
+  fseek(file, 0, SEEK_SET); // set to end to get number of bytes
 
   struct song_info playlist[BUFFER_SIZE];
 
   int i, n;
   struct song_info *tmp = calloc(sizeof(struct song_info), 1);
-  for (i = 0; i < BUFFER_SIZE && bytsiz != ftell(file); i++) {
+  for (i = 0; i < BUFFER_SIZE && bytsiz != ftell(file); i++) { // loops until done or at last byte
 
     fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
     fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
@@ -348,17 +360,17 @@ void remove_from_playlist() {
     }
     fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
     fread(&(tmp->seconds), sizeof(float), 1, file);
-    playlist[n] = *tmp;
+    playlist[n] = *tmp; // adds every song to playlist
     n++;
   }
 
   free(tmp);
-  fclose(file);
-  remove(filename);
+  fclose(file); 
+  remove(filename); // deletes file bcs impossible to overwrite; easier to just remake
 
-  file = fopen(filename, "wb");
+  file = fopen(filename, "wb"); // opens for binary writing
 
-  p2f(playlist, file, &n);
+  p2f(playlist, file, &n); // writes playlist to file
 
   fclose(file);
   free(filename);
@@ -366,9 +378,11 @@ void remove_from_playlist() {
 
 }
 
+// takes playlist and length; sorts by title alphabetically; returns null
 void sort_title(struct song_info *arr, int size) {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   int i, j;
   int n = size;
@@ -387,9 +401,11 @@ void sort_title(struct song_info *arr, int size) {
   free(key);
 }
 
+// takes playlist and length; sorts by artist alphabetically; returns null
 void sort_artist(struct song_info *arr, int size) {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   sort_title(arr, size);
   int i, j;
@@ -410,9 +426,11 @@ void sort_artist(struct song_info *arr, int size) {
   free(key);
 }
 
+// takes playlist and length; sorts by genre alphabetically; returns null
 void sort_genre(struct song_info *arr, int size) {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   sort_artist(arr,size);
   int i, j;
@@ -433,9 +451,11 @@ void sort_genre(struct song_info *arr, int size) {
   free(key);
 }
 
+// takes playlist and length; sorts by duration in increasing order; returns null
 void sort_duration(struct song_info *arr, int size) {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   int i, j;
   int n = size;
@@ -453,30 +473,38 @@ void sort_duration(struct song_info *arr, int size) {
     }
 }
 
+// takes playlist, file stream, and int pointer; reads file stream into playlist; returns null
 void f2p(struct song_info *playlist, FILE *file, int *i) {
+
+  signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   fseek(file, 0, SEEK_END);
   int bytsiz = ftell(file);
-  fseek(file, 0, SEEK_SET);
+  fseek(file, 0, SEEK_SET); // seek end to know last byte to know size in bytes
 
   struct song_info *tmp = calloc(sizeof(struct song_info), 1);
-  for (*i = 0; *i < BUFFER_SIZE && ftell(file) != bytsiz; (*i)++) {
+  for (*i = 0; *i < BUFFER_SIZE && ftell(file) != bytsiz; (*i)++) { // loop until finished or at last byte
     fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
     fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
     fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
     fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
     fread(&(tmp->seconds), sizeof(float), 1, file);
-    playlist[*i] = *tmp;
+    playlist[*i] = *tmp; // adds every struct to playlist
   }
 
   free(tmp);
 
 }
 
+// takes a string buffer, playlist, file stream, and int pointer; prompts user for how to sort and sorts; returns null
 void sort(char *buffer, struct song_info *playlist, FILE *file, int *i) {
 
+  signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
+
   printf("Sort by 'title', 'artist', 'genre', or 'duration', or 'exit': \n");
-  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+  read(STDIN_FILENO, buffer, BUFFER_SIZE); 
   char *rm2 = strrchr(buffer, '\n');
   rm2[0] = '\0';
 
@@ -503,75 +531,45 @@ void sort(char *buffer, struct song_info *playlist, FILE *file, int *i) {
 
 }
 
+// takes null; sorts playlist permanently; returns null
 void sort_write() {
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-  get_pname(buffer);
+  get_pname(buffer); // prompts for playlist name
 
   if (!strcmp(buffer, "exit")) {
     free(buffer);
     exit(0);
   }
 
-  FILE *file = fopen(buffer, "rb");
+  FILE *file = fopen(buffer, "rb"); // opens for binary reading
   if (file == NULL) {
     printf("Error opening playlist: %sn", strerror(errno));
   }
 
-  struct song_info playlist[BUFFER_SIZE]; // consider adding a function to read into a struct
+  struct song_info playlist[BUFFER_SIZE]; 
   int i;
-  f2p(playlist, file, &i);
+  f2p(playlist, file, &i); // reads file into playlist
 
-  sort(buffer, playlist, file, &i);
+  sort(buffer, playlist, file, &i); // sorts playlist as user asks
 
-  fseek(file, 0, SEEK_SET);
+  fseek(file, 0, SEEK_SET); // sets back to beginning
 
-  p2f(playlist, file, &i);
+  p2f(playlist, file, &i); // writes playlist to file (overwrites current bytes) (length remains the same)
 
   fclose(file);
   free(buffer);
 
 }
 
-void play_sorted() { // add sort and save too
-
-  signal(SIGINT, &sighandler);
-
-  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-  get_pname(buffer);
-
-  if (!strcmp(buffer, "exit")) {
-    free(buffer);
-    exit(0);
-  }
-
-  FILE *file = fopen(buffer, "rb");
-  if (file == NULL) {
-    printf("Error opening playlist: %sn", strerror(errno));
-  }
-
-  struct song_info playlist[BUFFER_SIZE]; // consider adding a function to read into a struct
-  int i;
-  f2p(playlist, file, &i);
-
-  sort(buffer, playlist, file, &i);
-
-  int n;
-  for (n = 0; n < i; n++) {
-    printf("Playing %s by %s\n", playlist[n].title, playlist[n].artist);
-    play_wav(playlist[n].path);
-  }
-
-  fclose(file);
-  free(buffer);
-
-}
-
+// takes null; creates semaphore; returns int
 int create_sema(){
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   // create semaphore
   int v, r;
@@ -591,9 +589,11 @@ int create_sema(){
   return semd;
 }
 
+// takes file path; adds song on path to queue; returns int
 int add_song_to_queue(const char * path){
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   char cppath[BUFFER_SIZE];
   strcpy(cppath, path);
@@ -619,9 +619,11 @@ int add_song_to_queue(const char * path){
   return 0;
 }
 
+// takes playlist name; adds all playlist songs to queue; returns int
 int add_playlist_to_queue(const char * name){
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   int semd = create_sema();
   struct sembuf sb;
@@ -648,9 +650,11 @@ int add_playlist_to_queue(const char * name){
   return 0;
 }
 
+// takes null; clears the queue; returns int
 int clear_queue(){
 
   signal(SIGINT, &sighandler);
+  signal(SIGSTOP, &sighandler);
 
   int semd = create_sema();
   struct sembuf sb;

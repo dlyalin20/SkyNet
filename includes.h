@@ -4,20 +4,14 @@
 #define INCLUDES "defined"
 
 // preprocessor variables
-#define BUFFER_SIZE 100
-#define MUS_PATH "ex1.wav"
-
-#define secKey 100
-#define specKey 200
-#define lenKey 300
-#define bufKey 400
-#define IDKey 500
-#define maxKey 600
-
 #define QUEUEKEY 24602
+#define BUFFER_SIZE 100
 
+// windows only 
 #if defined(__CYGWIN___)
+	// inclusion for sending audio over servers
 	#include <sys/sendfile>
+	// semaphore struct
 	union semun {
 	int              val;    // Value for SETVAL
 	struct semid_ds *buf;    // Buffer for IPC_STAT, IPC_SET *\/
@@ -56,16 +50,17 @@
 
 struct song_info {
 
-    char path[BUFFER_SIZE];
-	char artist[BUFFER_SIZE];
-	char title[BUFFER_SIZE];
-	char genre[BUFFER_SIZE];
-	float seconds;
+    char path[BUFFER_SIZE]; // file path; includes extension
+	char artist[BUFFER_SIZE]; // file artist
+	char title[BUFFER_SIZE]; // file title
+	char genre[BUFFER_SIZE]; // file genre
+	float seconds; // duration in milliseconds
 
 };
 
+// wav header struct
 struct WAV {
-
+						// Ex Size
 	char chunk_id[4]; // "RIFF" 4 bytes
 	int chunk_size; // 405040 4 bytes
 	char format[4]; // "WAVE" 4 bytes

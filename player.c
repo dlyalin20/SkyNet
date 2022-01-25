@@ -18,6 +18,8 @@ void list_of_valid_commands(){
   printf("\tPlay the current queue\n");
   printf("-playplaylist [playlist name]\n");
   printf("\tPlays the specified playlist\n");
+  printf("-playsort\n");
+  printf("\tAllows for sorting and playing a playlist without permanently altering it\n");
 }
 int main(int argc, char const *argv[]) {
   if (--argc < 1){
@@ -26,6 +28,7 @@ int main(int argc, char const *argv[]) {
     list_of_valid_commands();
     exit(0);
   }
+  // -play [song name (including '.wav')]
   if (!strcmp(argv[1], "-play")) {
     printf("playing: %s\n", argv[2]);
     char *song = calloc(BUFFER_SIZE, sizeof(char));
@@ -36,11 +39,18 @@ int main(int argc, char const *argv[]) {
     else
       printf("Only .wav files can be played\n");
     free(song);
-  }
-  else if (!strcmp(argv[1], "-playqueue"))
+  } else 
+  // plays queue
+  if (!strcmp(argv[1], "-playqueue")) 
     play_queue();
-  else if (!strcmp(argv[1], "-playplaylist"))
+  else 
+  // -playplaylist [playlist name]
+  if (!strcmp(argv[1], "-playplaylist")) 
     play_playlist(argv[2]);
+  else 
+  // plays sorted playlist
+  if (!strcmp(argv[1], "-playsort")) 
+      play_sorted();
   else {
     printf("%s is Not a valid command\n", argv[1]);
     list_of_valid_commands();

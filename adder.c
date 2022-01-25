@@ -21,8 +21,6 @@ void list_of_valid_commands(){ // finish this
   printf("\tAllows for removing a song from an extant playlist\n");
   printf("-savesort\n");
   printf("\tAllows for sorting a playlist permanently\n");
-  printf("-playsort\n");
-  printf("\tAllows for sorting and playing a playlist without permanently altering it\n");
   printf("-addplaylisttoqueue [playlist name]\n");
   printf("\tAdds all the songs in specified playlist to queue\n");
   printf("-clearqueue\n");
@@ -57,11 +55,6 @@ int main(int argc, char const *argv[]) {
     // saves a sorted playlist
     if (!strcmp(argv[1], "-savesort")) {
       sort_write();
-    }
-    else
-    // plays sorted playlist only
-    if (!strcmp(argv[1], "-playsort")) {
-      play_sorted();
     }
     else
     // make playlist from current working directory
