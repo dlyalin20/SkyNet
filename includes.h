@@ -19,8 +19,6 @@
 #define maxKey 600
 
 // standard includes
-#include "runs.h"
-#include "shell.h"
 #include "cJSON.h"
 #include <time.h>
 #include <ctype.h>

@@ -1,7 +1,4 @@
 #include "includes.h"
-#include "runs.h"
-#include "parsing.h"
-#include "shell.h"
 // later remove files and see .o
 
 int main(int argc, char *argv[]) {
@@ -49,7 +46,7 @@ int main(int argc, char *argv[]) {
     //make_playlist(); 
     //play_playlist("Test");
     //add_to_playlist();
-    play_sorted();
+    //play_sorted();
 
   }
 

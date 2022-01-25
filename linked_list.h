@@ -25,5 +25,6 @@ void play_sorted();
 void sort_title(struct song_info *arr, int size);
 void sort_artist(struct song_info *arr, int size);
 void sort_genre(struct song_info *arr, int size);
+void sort_duration(struct song_info *arr, int size);
 
 #endif
