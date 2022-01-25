@@ -6,3 +6,4 @@ Daniel; 10:06 PM, Friday, January 21; Began working on lyric api, including pyth
 Daniel; 7:37 PM; Saturday, January 22; Finished pausing and quitting songs
 Daniel; 10:10 PM, Saturday, January 22; Finished half of playlist and init functionality
 Daniel; 7:10 PM, Monday, January 24; Created song structs, finished initalization, find_files, get_song_info
+Daniel; 9:33 PM, Monday, January 24; Added deleting playlists, adding more songs to playlists, creating playlists

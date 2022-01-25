@@ -117,73 +117,176 @@ struct song_info * find_files(struct song_info *song_data, char * path) {
   return song_data;
 }
 
-void print_song(struct songs *song) {
-
-    printf("Song Title: %s\n", song->name);
-
-}
-
-void print_playlist(struct songs *HEAD) {
-    struct songs *tmp = HEAD;
-    while (tmp != NULL) {
-
-        print_song(tmp);
-        tmp = tmp->next;
-
-    }
-}
-
-struct songs * create_song(char *title) {
-
-    struct songs *song = calloc(1, sizeof(struct songs));
-    strcpy(song->name, title);
-    song->next = NULL;
-
-
-    free(song);
-    return song;
-
-}
-
-struct songs * insert_song_end(struct songs *to_add, struct songs *HEAD) {
-
-    struct songs *tmp = HEAD;
-
-    while (tmp->next != NULL) {
-        tmp = tmp->next;
-    }
-
-    tmp->next = to_add;
-
-    return HEAD;
-
-}
-
-struct songs * remove_song(char *title, struct songs *HEAD) {
-
-    if (!strcmp(HEAD->name, title)) {
-        return HEAD->next;
-    }
-
-    struct songs *tmp = HEAD;
-
-    while (tmp->next) {
-
-        if (!strcmp(tmp->next->name, title)) {
-            tmp->next = tmp->next->next;
-            return HEAD;
-        }
-        else
-            tmp = tmp->next;
-
-    }
-
-    return HEAD;
-
-}
-
 int delete_playlist(char *playlist_name) {
 
     return remove(playlist_name);
 
 }
+
+void print_info(struct song_info *song) {
+
+  printf("Playing %s by %s\n", song->title, song->artist);
+
+}
+
+int make_playlist() { // in progress
+
+  printf("Please input playlist name: \n");
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+  char *rem;
+  rem = strrchr(buffer, '\n');
+  rem[0] = '\0';
+  FILE *file = fopen(buffer, "wb+");
+
+  if (file == NULL) {
+    printf("Error: %s\n", strerror(errno));
+    exit(-1);
+  }
+
+  printf("Please input a song to add, or type exit: \n");
+  struct stat stats;
+  while (1) {
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+    char *end;
+    end = strrchr(buffer, '\n');
+    end[0] = '\0';
+    char * ext = strrchr(buffer,'.');
+    if (!strcmp(buffer, "exit"))
+      break;
+    if (!stat(buffer, &stats) && ext != NULL && !strcmp(ext, ".wav")) {
+      struct song_info *tmp = calloc(1, sizeof(struct song_info));
+      get_song_info(tmp, buffer);
+      fwrite(tmp->path, BUFFER_SIZE, 1, file);
+      fwrite(tmp->artist, BUFFER_SIZE, 1, file);
+      fwrite(tmp->title, BUFFER_SIZE, 1, file);
+      fwrite(tmp->genre, BUFFER_SIZE, 1, file);
+      fwrite(&(tmp->seconds), sizeof(tmp->seconds), 1, file);
+    }
+    else {
+      printf("%s doesn't exist\n", buffer);
+    }
+    printf("Please input a song to add, or type exit: \n");
+  }
+
+  free(buffer);
+  fclose(file);
+
+  printf("Playlist Created\n");
+
+  return 0;
+
+}
+
+int play_playlist(char *playlist_name) {
+
+  struct stat stats;
+
+  FILE *file = fopen(playlist_name, "rb+");
+
+  if (file == NULL) {
+    printf("Error Opening Playlist: %s\n", strerror(errno));
+  }
+
+  fseek(file, 0, SEEK_END);
+  int byte_size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  //printf("Past here\n");
+
+  int i;
+  char path[BUFFER_SIZE], artist[BUFFER_SIZE], title[BUFFER_SIZE], genre[BUFFER_SIZE];
+  float seconds;
+  for (i = 0; i < BUFFER_SIZE; i++) {
+
+    if (ftell(file) == byte_size)
+      break;
+    fread(&path, BUFFER_SIZE, sizeof(char), file);
+    fread(&artist, BUFFER_SIZE, sizeof(char), file);
+    fread(&title, BUFFER_SIZE, sizeof(char), file);
+    fread(&genre, BUFFER_SIZE, sizeof(char), file);
+    fread(&seconds, 1, sizeof(float), file);
+    
+    struct song_info *tmp = calloc(1, sizeof(struct song_info));
+    strcpy(tmp->path, path);
+    strcpy(tmp->artist, artist);
+    strcpy(tmp->title, title);
+    strcpy(tmp->genre, genre);
+    tmp->seconds = seconds;
+
+    printf("Playing %s by %s\n", tmp->title, tmp->artist);
+    play_wav(tmp->path);
+    free(tmp);
+
+  }
+
+  fclose(file);
+
+  return 0;
+
+}
+
+int add_to_playlist() {
+
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+
+  while (1) {
+
+    printf("Type playlist name to add to or exit to quit: \n");
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+
+    char *end;
+    end = strrchr(buffer, '\n');
+    end[0] = '\0';
+
+    if (!strcmp(buffer, "exit")) {
+      break;
+    }
+
+    FILE *file = fopen(buffer, "wb+");
+    if (file == NULL) {
+      printf("Error opening playlist: %s\n", strerror(errno));
+      continue;
+    }
+
+    fseek(file, 0, SEEK_END);
+
+    printf("Type song name to add to playlist or exit to quit: \n");
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+
+    char *rm;
+    rm = strrchr(buffer, '\n');
+    rm[0] = '\0';
+
+    struct stat stats;
+
+    char *ext = strrchr(buffer, '.');
+
+    if (!stat(buffer, &stats) && ext != NULL && !strcmp(ext, ".wav")) {
+      struct song_info *tmp = calloc(1, sizeof(struct song_info));
+      get_song_info(tmp, buffer);
+      fwrite(tmp->path, BUFFER_SIZE, 1, file);
+      fwrite(tmp->artist, BUFFER_SIZE, 1, file);
+      fwrite(tmp->title, BUFFER_SIZE, 1, file);
+      fwrite(tmp->genre, BUFFER_SIZE, 1, file);
+      fwrite(&(tmp->seconds), sizeof(tmp->seconds), 1, file);
+      free(tmp);
+    }
+    else {
+      printf("Error finding that song!\n");
+      continue;
+    }
+
+    fclose(file);
+
+  } 
+
+  free(buffer);
+
+  return 0;
+
+}
+
+// removing songs froms playlists; add going back in playlists
+
+// remember to allow for modifying playlists and reorganizing playlists 

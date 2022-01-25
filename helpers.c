@@ -46,6 +46,9 @@ int play_wav(char *song) {
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
     int success = SDL_QueueAudio(deviceID, wavBuffer, wavLength);
+    if (success) {
+      printf("Error Queueing Audio: %s\n", SDL_GetError());
+    }
     SDL_PauseAudioDevice(deviceID, 0);
 
     fd_set read_fds;
@@ -171,16 +174,4 @@ void shuffle(char **array, size_t n)
           array[i] = t;
         }
     }
-}
-
-int make_playlist() { // in progress
-
-  printf("Please input playlist nane: \n");
-  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
-  fread(buffer, sizeof(char), BUFFER_SIZE, stdin);
-  int fd = open(buffer, O_CREAT | O_EXCL | O_WRONLY | O_APPEND);
-
-  struct songs *front = NULL;
-
-
 }

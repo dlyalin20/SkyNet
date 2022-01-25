@@ -23,19 +23,6 @@ int main(int argc, char *argv[]) {
 	   	initialize(argc, argv);
    }
 
-   /* else if (!strcmp(argv[1], "launch")) {
-
-     launch();
-     printf("Shared memory created!");
-
-   } */
-
-   /* else if (!strcmp(argv[1], "launch")) {
-
-	   launch_shell();
-
-   } */
-
    else if (!strcmp(argv[1], "-play")) {
      printf("playing: %s\n", argv[2]);
 	   char *song = calloc(BUFFER_SIZE, sizeof(char));
@@ -57,17 +44,15 @@ int main(int argc, char *argv[]) {
 
    }
 
-   /* else if (!strcmp(argv[1], "unpause")) {
+  else if (!strcmp(argv[1], "test")) {
 
-     unpause_wav();
+    //make_playlist(); // test this next
+    //play_playlist("Test");
+    //add_to_playlist();
 
-   }
+  }
 
 
-  else if(!strcmp(argv[1], "close")) {
-
-    shut_down();
-
-  } */
+   // write a deinit function and error checking
 
 }
