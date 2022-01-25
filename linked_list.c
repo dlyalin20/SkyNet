@@ -21,7 +21,6 @@ float get_duration(char *filename) {
 }
 
 struct song_info * get_song_info(struct song_info *info, char *PATH) {
-
     char *cmd = "exiftool";
     char *args[] = {cmd, "-charset", "filename=utf8", "-charset", "exif=utf8", "-charset", "iptc=utf8", "-use", "mwg", "-m", "-G0:1", "-wm", "wcg", "-a", "-j", "-struct", "-w!", "\%d\%f.json", "-All", PATH, NULL};
 
@@ -30,7 +29,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     if (!pid) { // child process
 
         execvp(cmd, args);
-
+        exit(0);
     }
 
     else {
@@ -65,6 +64,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     /* if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) {
 
         printf("Song Title: %s\n", cTitle->valuestring);
+        strcpy(info->title, cTitle->valuestring);
 
     } */
 
