@@ -39,7 +39,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     }
 
     struct stat stats;
-    
+
     char *pathcopy = calloc(BUFFER_SIZE, sizeof(char));
     strcpy(pathcopy, PATH);
     char *lastExt = strrchr(pathcopy, '.');
@@ -206,7 +206,7 @@ int play_playlist(char *playlist_name) {
     fread(&title, BUFFER_SIZE, sizeof(char), file);
     fread(&genre, BUFFER_SIZE, sizeof(char), file);
     fread(&seconds, 1, sizeof(float), file);
-    
+
     struct song_info *tmp = calloc(1, sizeof(struct song_info));
     strcpy(tmp->path, path);
     strcpy(tmp->artist, artist);
@@ -279,7 +279,7 @@ int add_to_playlist() {
 
     fclose(file);
 
-  } 
+  }
 
   free(buffer);
 
@@ -287,6 +287,59 @@ int add_to_playlist() {
 
 }
 
+void sort_title(struct song_info **arr, int size){
+  int i, j;
+  int n = size;
+  char *key = calloc(BUFFER_SIZE,1);
+    for (i = 1; i < n; i++) {
+        strcpy(key,arr[i]->title);
+        j = i - 1;
+        while (j >= 0 && strcmp(arr[j]->title, key)>0) {
+            struct song_info *temp = arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = temp;
+            j--;
+        }
+        strcpy(arr[j + 1]->title, key);
+    }
+}
+
+void sort_artist(struct song_info **arr, int size){
+  sort_title(arr,size);
+  int i, j;
+  int n = size;
+  char *key = calloc(BUFFER_SIZE,1);
+    for (i = 1; i < n; i++) {
+        strcpy(key,arr[i]->artist);
+        j = i - 1;
+        while (j >= 0 && strcmp(arr[j]->artist, key)>0) {
+            struct song_info *temp = arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = temp;
+            j--;
+        }
+        strcpy(arr[j + 1]->artist, key);
+    }
+}
+
+void sort_genre(struct song_info **arr, int size){
+  sort_artist(arr,size);
+  int i, j;
+  int n = size;
+  char *key = calloc(BUFFER_SIZE,1);
+    for (i = 1; i < n; i++) {
+        strcpy(key,arr[i]->genre);
+        j = i - 1;
+        while (j >= 0 && strcmp(arr[j]->genre, key)>0) {
+            struct song_info *temp = arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = temp;
+            j--;
+        }
+        strcpy(arr[j + 1]->genre, key);
+    }
+}
+
 // removing songs froms playlists; add going back in playlists
 
-// remember to allow for modifying playlists and reorganizing playlists 
+// remember to allow for modifying playlists and reorganizing playlists

@@ -21,5 +21,8 @@ struct song_info * find_files(struct song_info *song_data, char * path);
 int make_playlist();
 int play_playlist(char *playlist_name);
 int add_to_playlist();
+void sort_title(struct song_info **arr, int size);
+void sort_artist(struct song_info **arr, int size);
+void sort_genre(struct song_info **arr, int size);
 
 #endif
