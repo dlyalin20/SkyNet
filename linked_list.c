@@ -287,57 +287,312 @@ int add_to_playlist() {
 
 }
 
-void sort_title(struct song_info **arr, int size){
+void sort_write() {
+
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+  printf("Which playlist would you like to sort and save, or exit: \n");
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+
+  char *rm = strrchr(buffer, '\n');
+  rm[0] = '\0';
+
+  if (!strcmp(buffer, "exit")) {
+    free(buffer);
+    exit(0);
+  }
+
+  FILE *file = fopen(buffer, "rb");
+  if (file == NULL) {
+    printf("Error opening playlist: %sn", strerror(errno));
+  }
+
+  fseek(file, 0, SEEK_END);
+  int bytsiz = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  struct song_info playlist[BUFFER_SIZE]; // consider adding a function to read into a struct
+  int i;
+  struct song_info *tmp = calloc(sizeof(struct song_info), 1);
+  for (i = 0; i < BUFFER_SIZE && ftell(file) != bytsiz; i++) {
+    fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
+    fread(&(tmp->seconds), sizeof(float), 1, file);
+    playlist[i] = *tmp;
+  }
+
+  free(tmp);
+
+  printf("Sort by 'title', 'artist', 'genre', or 'duration', or 'exit': \n");
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+  char *rm2 = strrchr(buffer, '\n');
+  rm2[0] = '\0';
+
+  if (!strcmp(buffer,"exit")) {
+    fclose(file);
+    free(buffer);
+  }
+  if (!strcmp(buffer, "title")) {
+    sort_title(playlist, i);
+  }
+  else if (!strcmp(buffer, "artist")) {
+    sort_artist(playlist, i);
+  }
+  else if (!strcmp(buffer, "genre")) {
+    sort_genre(playlist, i);
+  }
+  else if (!strcmp(buffer, "duration")) {
+    sort_duration(playlist, i);
+  }
+  else {
+    printf("No such sorting type!\n");
+    fclose(file);
+    free(buffer);
+    exit(-1);
+  }
+
+  fseek(file, 0, SEEK_SET);
+
+  int n;
+  for (n = 0; n < i; n++) {
+    fwrite(playlist[i].path, BUFFER_SIZE, sizeof(char), file);
+    fwrite(playlist[i].artist, BUFFER_SIZE, sizeof(char), file);
+    fwrite(playlist[i].title, BUFFER_SIZE, sizeof(char), file);
+    fwrite(playlist[i].genre, BUFFER_SIZE, sizeof(char), file);
+    fwrite(&(playlist[i].seconds), BUFFER_SIZE, sizeof(char), file);
+  }
+
+  fclose(file);
+  free(buffer);
+
+}
+
+void play_sorted() { // add sort and save too
+
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+  printf("Which playlist would you like to sort and play, or exit: \n");
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+
+  char *rm = strrchr(buffer, '\n');
+  rm[0] = '\0';
+
+  if (!strcmp(buffer, "exit")) {
+    free(buffer);
+    exit(0);
+  }
+
+  FILE *file = fopen(buffer, "rb");
+  if (file == NULL) {
+    printf("Error opening playlist: %sn", strerror(errno));
+  }
+
+  fseek(file, 0, SEEK_END);
+  int bytsiz = ftell(file);
+  fseek(file, 0, SEEK_SET);
+
+  struct song_info playlist[BUFFER_SIZE]; // consider adding a function to read into a struct
+  int i;
+  struct song_info *tmp = calloc(sizeof(struct song_info), 1);
+  for (i = 0; i < BUFFER_SIZE && ftell(file) != bytsiz; i++) {
+    fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
+    fread(&(tmp->seconds), sizeof(float), 1, file);
+    playlist[i] = *tmp;
+  }
+
+  free(tmp);
+
+  printf("Sort by 'title', 'artist', 'genre', or 'duration': \n");
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
+  char *rm2 = strrchr(buffer, '\n');
+  rm2[0] = '\0';
+
+  if (!strcmp(buffer, "title")) {
+    sort_title(playlist, i);
+  }
+  else if (!strcmp(buffer, "artist")) {
+    sort_artist(playlist, i);
+  }
+  else if (!strcmp(buffer, "genre")) {
+    sort_genre(playlist, i);
+  }
+  else if (!strcmp(buffer, "duration")) {
+    sort_duration(playlist, i);
+  }
+  else {
+    printf("No such sorting type!\n");
+    fclose(file);
+    free(buffer);
+    exit(-1);
+  }
+
+  int n;
+  for (n = 0; n < i; n++) {
+    printf("Playing %s by %s\n", playlist[n].title, playlist[n].artist);
+    play_wav(playlist[n].path);
+  }
+
+  fclose(file);
+  free(buffer);
+
+}
+
+void sort_title(struct song_info *arr, int size) {
+
+  int i, j;
+  int n = size;
+  char *key = calloc(BUFFER_SIZE, 1);
+    for (i = 1; i < n; i++) {
+        strcpy(key, arr[i].path); // just for now
+        j = i - 1;
+        while (j >= 0 && strcmp(arr[j].path, key)>0) {
+            struct song_info *temp = &arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = *temp;
+            j--;
+        }
+        strcpy(arr[j + 1].path, key);
+    }
+  free(key);
+}
+
+void sort_artist(struct song_info *arr, int size) {
+  sort_title(arr, size);
   int i, j;
   int n = size;
   char *key = calloc(BUFFER_SIZE,1);
     for (i = 1; i < n; i++) {
-        strcpy(key,arr[i]->title);
+        strcpy(key,arr[i].artist);
         j = i - 1;
-        while (j >= 0 && strcmp(arr[j]->title, key)>0) {
-            struct song_info *temp = arr[j+1];
+        while (j >= 0 && strcmp(arr[j].artist, key)>0) {
+            struct song_info *temp = &arr[j+1];
             arr[j + 1] = arr[j];
-            arr[j] = temp;
+            arr[j] = *temp;
             j--;
+            free(temp);
         }
-        strcpy(arr[j + 1]->title, key);
+        strcpy(arr[j + 1].artist, key);
     }
+  free(key);
 }
 
-void sort_artist(struct song_info **arr, int size){
-  sort_title(arr,size);
-  int i, j;
-  int n = size;
-  char *key = calloc(BUFFER_SIZE,1);
-    for (i = 1; i < n; i++) {
-        strcpy(key,arr[i]->artist);
-        j = i - 1;
-        while (j >= 0 && strcmp(arr[j]->artist, key)>0) {
-            struct song_info *temp = arr[j+1];
-            arr[j + 1] = arr[j];
-            arr[j] = temp;
-            j--;
-        }
-        strcpy(arr[j + 1]->artist, key);
-    }
-}
-
-void sort_genre(struct song_info **arr, int size){
+void sort_genre(struct song_info *arr, int size) {
   sort_artist(arr,size);
   int i, j;
   int n = size;
   char *key = calloc(BUFFER_SIZE,1);
     for (i = 1; i < n; i++) {
-        strcpy(key,arr[i]->genre);
+        strcpy(key, arr[i].genre);
         j = i - 1;
-        while (j >= 0 && strcmp(arr[j]->genre, key)>0) {
-            struct song_info *temp = arr[j+1];
+        while (j >= 0 && strcmp(arr[j].genre, key)>0) {
+            struct song_info *temp = &arr[j+1];
             arr[j + 1] = arr[j];
-            arr[j] = temp;
+            arr[j] = *temp;
+            j--;
+            free(temp);
+        }
+        strcpy(arr[j + 1].genre, key);
+    }
+  free(key);
+}
+
+void sort_duration(struct song_info *arr, int size) {
+  int i, j;
+  int n = size;
+  float key = 0;
+    for (i = 1; i < n; i++) {
+        key = arr[i].seconds;
+        j = i - 1;
+        while (j >= 0 && arr[j].seconds > key) {
+            struct song_info *temp = &arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = *temp;
             j--;
         }
-        strcpy(arr[j + 1]->genre, key);
+        arr[j+1].seconds = key;
     }
+}
+
+void remove_from_playlist() {
+
+  char *buffer = calloc(BUFFER_SIZE, sizeof(char));
+
+  while (1) {
+
+    printf("Enter playlist to remove songs from, or 'exit': \n");
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+    char *rm = strrchr(buffer, '\n');
+    rm[0] = '\0';
+
+    if (!strcmp(buffer, "exit")) {
+      break;
+    }
+    FILE *file = fopen(buffer, "rb");
+
+    char *filename = calloc(BUFFER_SIZE, sizeof(char));
+    strcpy(filename, buffer);
+
+    printf("Enter song title to remove: \n");
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+    char *rm2 = strrchr(buffer, '\n');
+    rm2[0] = '\0';
+
+    fseek(file, 0, SEEK_END);
+    int bytsiz = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    struct song_info playlist[BUFFER_SIZE];
+
+    int i, n;
+    struct song_info *tmp = calloc(sizeof(struct song_info), 1);
+    for (i = 0; i < BUFFER_SIZE && bytsiz != ftell(file); i++) {
+
+      fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
+      fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
+      fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
+      if (!strcmp(buffer, tmp->title)) {
+        fseek(file, BUFFER_SIZE + sizeof(float), SEEK_CUR);
+        continue;
+      }
+      fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
+      fread(&(tmp->seconds), sizeof(float), 1, file);
+      playlist[n] = *tmp;
+      n++;
+
+    }
+
+    free(tmp);
+    fclose(file);
+    remove(filename);
+
+    file = fopen(filename, "wb");
+
+    for (i = 0; i < n; i++) {
+      fwrite(playlist[i].path, BUFFER_SIZE, sizeof(char), file);
+      fwrite(playlist[i].artist, BUFFER_SIZE, sizeof(char), file);
+      fwrite(playlist[i].title, BUFFER_SIZE, sizeof(char), file);
+      fwrite(playlist[i].genre, BUFFER_SIZE, sizeof(char), file);
+      fwrite(&(playlist[i].seconds), sizeof(float), sizeof(char), file);
+    }
+
+    fclose(file);
+    free(filename);
+
+    printf("Would you like to modify another playlist, 'y' or 'n'?\n");
+    read(STDIN_FILENO, buffer, BUFFER_SIZE);
+    char *rm3 = strrchr(buffer, '\n');
+    rm3[0] = '\0';
+    if (!strcmp(buffer, "y"))
+      continue;
+    else
+      break;
+  }
+
+  free(buffer);
+
 }
 
 void sort_duration(struct song_info **arr, int size){
@@ -358,5 +613,5 @@ void sort_duration(struct song_info **arr, int size){
 }
 
 // removing songs froms playlists; add going back in playlists
+// change so that command line inputs are taken instead of prompts
 
-// remember to allow for modifying playlists and reorganizing playlists
