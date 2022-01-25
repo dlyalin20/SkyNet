@@ -1,18 +1,26 @@
-all: main.o helpers.o parsing.o linked_list.o
-	clang -o main -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -framework SDL2 main.o helpers.o parsing.o linked_list.o -lcJSON
+all: player adder
 
-main.o: main.c includes.h cJSON.h
-	clang -c main.c 
+player:	player.o playerhelpers.o
+	clang -o player.run  player.o -lSDL2 playerhelpers.o cJSON.o
 
-helpers.o: helpers.c includes.h 
-	clang -c helpers.c 
+adder: adder.o adderhelpers.o  cJSON.o
+	gcc -o adder.run -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -framework SDL2 -lSDL2 adderhelpers.o cJSON.o
 
-parsing.o: parsing.c parsing.h includes.h
-	clang -c parsing.c
+player.o: player.c cJSON.h includes.h
+	gcc -c player.c
 
-linked_list.o: linked_list.c linked_list.h includes.h
-	clang -c linked_list.c
+playerhelpers.o: playerhelpers.c playerhelpers.h includes.h
+	gcc -c playerhelpers.c
 
-clean: 
-	rm -rf *.o
+adder.o: adder.c
+	gcc -c adder.c
 
+adderhelper.o: adderhelpers.c adderhelpers.h playerhelpers.h
+	gcc -c adderhelpers.c
+
+cJSON.o: cJSON.c cJSON.h
+	gcc -c cJSON.c
+	
+clean:
+	-rm -rf *.o
+	-rm -rf *.run

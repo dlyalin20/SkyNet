@@ -15,7 +15,6 @@ void list_of_valid_commands(){
   printf("-playqueue\n");
   printf("play the current queue\n");
   printf("-playplaylist [playlist name]\n");
-  printf("adds an initalized playlist into the queue and plays the queue\n");
 
 }
 int main(int argc, char const *argv[]) {

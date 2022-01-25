@@ -18,9 +18,16 @@
 #define IDKey 500
 #define maxKey 600
 
+#define QUEUEKEY 24602
+
+union semun {
+   int              val;    // Value for SETVAL
+   struct semid_ds *buf;    // Buffer for IPC_STAT, IPC_SET *\/
+   unsigned short  *array;  // Array for GETALL, SETALL *\/ */
+   struct seminfo  *__buf;  // Buffer for IPC_INFO */
+                               // (Linux-specific) */
+};
 // standard includes
-#include "runs.h"
-#include "shell.h"
 #include "cJSON.h"
 #include <time.h>
 #include <ctype.h>
@@ -34,7 +41,6 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include "parsing.h"
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
@@ -44,10 +50,28 @@
 #include <SDL2/SDL.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "linked_list.h"
-#endif
+#include <sys/sendfile.h>
+
+
 
 // structs
+
+struct song_info {
+
+    char path[BUFFER_SIZE];
+	char artist[BUFFER_SIZE];
+	char title[BUFFER_SIZE];
+	char genre[BUFFER_SIZE];
+	float seconds;
+
+};
+
+struct songs {
+
+	char name[BUFFER_SIZE];
+	struct songs *next;
+
+};
 
 struct WAV {
 
@@ -67,13 +91,4 @@ struct WAV {
 
 };
 
-// functions
-void shuffle(char **array, size_t n);
-int play_wav(char *song);
-int logic_controller(char *buffer);
-int initialize(int argc, char **argv);
-int make_playlist();
-//int launch();
-//int shut_down();
-//static void sighandler(int sig);
-//int unpause_wav();
+#endif

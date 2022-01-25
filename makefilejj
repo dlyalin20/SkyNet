@@ -1,22 +1,25 @@
-all: main.o helpers.o parsing.o runs.o linked_list.o cJSON.o
-	gcc -o main -I/usr/include main.o -lSDL2 helpers.o parsing.o runs.o shell.o linked_list.o cJSON.o
+all: player adder
+	
+player:	player.o playerhelpers.o
+	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o
 
-main.o: main.c includes.h cJSON.h
-	gcc -c main.c
+adder: adder.o adderhelpers.o  cJSON.o
+	gcc -o adder.run -I/usr/include adder.o -lSDL2 adderhelpers.o cJSON.o
 
-helpers.o: helpers.c includes.h
-	gcc -c helpers.c
+player.o: player.c cJSON.h includes.h
+	gcc -c player.c
 
-parsing.o: parsing.c parsing.h includes.h
-	gcc -c parsing.c
+playerhelpers.o: playerhelpers.c playerhelpers.h includes.h
+	gcc -c playerhelpers.c
 
-runs.o: runs.c includes.h
-	gcc -c runs.c
+adder.o: adder.c
+	gcc -c adder.c
 
-linked_list.o: linked_list.c linked_list.h includes.h cJSON.h
-	gcc -c linked_list.c
+adderhelper.o: adderhelpers.c adderhelpers.h playerhelpers.h
+	gcc -c adderhelpers.c
 
 cJSON.o: cJSON.c cJSON.h
 	gcc -c cJSON.c
 clean:
-	rm -rf *.o
+	-rm -rf *.o
+	-rm -rf *.run
