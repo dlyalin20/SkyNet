@@ -340,6 +340,23 @@ void sort_genre(struct song_info **arr, int size){
     }
 }
 
+void sort_duration(struct song_info **arr, int size){
+  int i, j;
+  int n = size;
+  float key = 0;
+    for (i = 1; i < n; i++) {
+        key = arr[i]->seconds;
+        j = i - 1;
+        while (j >= 0 && arr[j]->seconds > key) {
+            struct song_info *temp = arr[j+1];
+            arr[j + 1] = arr[j];
+            arr[j] = temp;
+            j--;
+        }
+        arr[j+1]->seconds = key;
+    }
+}
+
 // removing songs froms playlists; add going back in playlists
 
 // remember to allow for modifying playlists and reorganizing playlists
