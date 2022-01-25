@@ -38,6 +38,10 @@ int main(int argc, char const *argv[]) {
     // clear_queue
     if (!strcmp(argv[1], "-clearqueue")){
       clear_queue();
+    }else
+    // add_song_to_queue
+    if (!strcmp(argv[1], "-addsongtoqueue")){
+      add_song_to_queue(argv[2]);
     }
 
     else{

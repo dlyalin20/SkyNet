@@ -22,5 +22,6 @@ void sort_genre(struct song_info **arr, int size);
 int add_playlist_to_queue(const char * name);
 int clear_queue();
 int create_sema();
+int add_song_to_queue(const char * path);
 
 #endif

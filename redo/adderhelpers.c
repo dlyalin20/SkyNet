@@ -352,7 +352,26 @@ int create_sema(){
   }
   return semd;
 }
+int add_song_to_queue(const char * path){
+  char cppath[BUFFER_SIZE];
+  strcpy(cppath, path);
+  struct song_info *tmp = calloc(1, sizeof(struct song_info));
+  get_song_info(tmp, cppath);
 
+  int semd = create_sema();
+  struct sembuf sb;
+  sb.sem_num = 0;
+  sb.sem_flg = SEM_UNDO;
+  sb.sem_op = -1; //setting the operation to down
+  int queue = open("queue", O_WRONLY | O_APPEND | O_CREAT, 0664);
+  write(queue, tmp->path, BUFFER_SIZE);
+  write(queue, tmp->artist, BUFFER_SIZE);
+  write(queue, tmp->title, BUFFER_SIZE);
+  write(queue, tmp->genre, BUFFER_SIZE);
+  write(queue, &(tmp->seconds), sizeof(tmp->seconds));
+  printf("Added %s to queue\n", tmp->title);
+  sb.sem_op = 1; //set the operation to up
+}
 int add_playlist_to_queue(const char * name){
   int semd = create_sema();
   struct sembuf sb;

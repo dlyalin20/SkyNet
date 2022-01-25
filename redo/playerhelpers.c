@@ -96,6 +96,7 @@ void play_queue(){
     int freadsize = fread(&path, sizeof(char), BUFFER_SIZE, file);
     if (freadsize < BUFFER_SIZE){
       sb.sem_op = 1; //set the operation to up
+      printf("Queue Empty Awaiting More Songs"\n");
       sleep(1);
       continue;
     }
