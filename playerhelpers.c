@@ -21,10 +21,15 @@ int play_wav(char *song) {
 
     SDL_AudioDeviceID deviceID = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
-    printf("Audio Device ID: %d\n", deviceID);
-    printf("%s\n", SDL_GetError());
-
+    if (!deviceID) {
+      printf("Error Opening Audio Device: %s\n", SDL_GetError());
+      exit(-1);
+    }
     int success = SDL_QueueAudio(deviceID, wavBuffer, wavLength);
+    if (success < 0)  {
+      printf("Error Queueing Audio: %s\n", SDL_GetError());
+      exit(-1);
+    }
     SDL_PauseAudioDevice(deviceID, 0);
 
     fd_set read_fds;
@@ -38,28 +43,26 @@ int play_wav(char *song) {
 
     timer->tv_sec = duration_in_seconds;
 
-    printf("Type a space to pause or unpause; type e to quit\n");
+    printf("Type a space to pause or unpause; type 'exit' to quit\n");
 
     int err = 0;
     while (!err) {
 
       err = select(STDIN_FILENO+1, &read_fds, NULL, NULL, timer);
       if (err) { //select triggered
-        printf("err triggered\n");
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
           fgets(buffer, sizeof(buffer), stdin);
         }
-        printf("%s\n", buffer);
         if (!strcmp(buffer, " \n")) { // space pressed
 
           if (SDL_GetAudioDeviceStatus(deviceID) == SDL_AUDIO_PLAYING)
             SDL_PauseAudioDevice(deviceID, 1);
           else
             SDL_PauseAudioDevice(deviceID, 0);
-            printf("Type a space to pause or unpause; type e to quit\n");
+            printf("Type a space to pause or unpause; type 'exit' to quit\n");
 
         }
-        if (!strcmp("e\n", buffer)) {
+        if (!strcmp("exit\n", buffer)) {
           break;
         }
         err = 0;
@@ -72,6 +75,8 @@ int play_wav(char *song) {
     SDL_CloseAudioDevice(deviceID);
     SDL_FreeWAV(wavBuffer);
     SDL_Quit();
+    free(wav_header);
+    fclose(fp);
 
     return 0;
 }

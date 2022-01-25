@@ -6,10 +6,6 @@
 // preprocessor variables
 #define BUFFER_SIZE 100
 #define MUS_PATH "ex1.wav"
-/* #define secKey ftok("main.c", getpid());
-#define specKey ftok("shell.c", getpid());
-#define lenKey ftok("helpers.c", getpid());
-#define bufKey ftok("parsing.c", getpid()); */
 
 #define secKey 100
 #define specKey 200
@@ -65,13 +61,6 @@ struct song_info {
 	char title[BUFFER_SIZE];
 	char genre[BUFFER_SIZE];
 	float seconds;
-
-};
-
-struct songs {
-
-	char name[BUFFER_SIZE];
-	struct songs *next;
 
 };
 
