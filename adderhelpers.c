@@ -190,7 +190,7 @@ int make_playlist(const char * path) {
   strcpy(playlist_name, buffer);
   strcat(filelocation, "/");
   strcat(filelocation, playlist_name);
-  FILE *file = fopen(filelocation, "wb+");
+  FILE *file = fopen(playlist_name, "wb+");
   if (file == NULL) {
     printf("Error: %s\n", strerror(errno));
     exit(-1);
@@ -230,8 +230,8 @@ int make_playlist(const char * path) {
   free(filelocation);
   fclose(file);
   // save location of playlist in current directory
-  FILE *holds_playlist_path = fopen(playlist_name, "wb+");
-  fwrite(path, strlen(path),1, holds_playlist_path);
+  // FILE *holds_playlist_path = fopen(playlist_name, "wb+");
+  // fwrite(path, strlen(path),1, holds_playlist_path);
   printf("Playlist Created\n");
   return 0;
 }
