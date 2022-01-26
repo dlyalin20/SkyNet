@@ -1,4 +1,4 @@
-all: player adder
+all: player adder server adderclient includes.h
 
 player:	player.o playerhelpers.o cJSON.o adderhelpers.o
 	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o adderhelpers.o
@@ -6,10 +6,16 @@ player:	player.o playerhelpers.o cJSON.o adderhelpers.o
 adder: adder.o adderhelpers.o  cJSON.o
 	gcc -o adder.run -I/usr/include adder.o -lSDL2 adderhelpers.o cJSON.o
 
-player.o: player.c cJSON.h includes.h
+server: server.o serverhelpers.o connections.o
+	gcc -o server.run server.o serverhelpers.o connections.o
+
+adderclient: adderclient.o connections.o
+	gcc -o adderclient.run adderclient.o connections.o
+
+player.o: player.c cJSON.h
 	gcc -c player.c
 
-playerhelpers.o: playerhelpers.c playerhelpers.h includes.h
+playerhelpers.o: playerhelpers.c playerhelpers.h
 	gcc -c playerhelpers.c
 
 adder.o: adder.c
@@ -20,6 +26,18 @@ adderhelper.o: adderhelpers.c adderhelpers.h playerhelpers.h
 
 cJSON.o: cJSON.c cJSON.h
 	gcc -c cJSON.c
+
+server.o: server.c serverhelpers.h connections.h
+	gcc -c server.c
+
+adderclient.o: adderclient.c connections.h
+	gcc -c adderclient.c
+
+serverhelpers.o: serverhelpers.c serverhelpers.h
+	gcc -c serverhelpers.c
+
+connections.o: connections.c connections.h
+	gcc -c connections.c
 
 clean:
 	-rm -rf *.o
