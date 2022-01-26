@@ -363,6 +363,8 @@ int add_song_to_queue(const char * path){
   sb.sem_num = 0;
   sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1; //setting the operation to down
+  semop(semd, &sb, 1); //preform operation
+
   int queue = open("queue", O_WRONLY | O_APPEND | O_CREAT, 0664);
   write(queue, tmp->path, BUFFER_SIZE);
   write(queue, tmp->artist, BUFFER_SIZE);
@@ -370,7 +372,8 @@ int add_song_to_queue(const char * path){
   write(queue, tmp->genre, BUFFER_SIZE);
   write(queue, &(tmp->seconds), sizeof(tmp->seconds));
   printf("Added %s to queue\n", tmp->title);
-  sb.sem_op = 1; //set the operation to up
+  sb.sem_op = 1; //set the operation to up;
+  semop(semd, &sb, 1); //preform operation
 
   return 0;
 }
@@ -380,6 +383,7 @@ int add_playlist_to_queue(const char * name){
   sb.sem_num = 0;
   sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1; //setting the operation to down
+  semop(semd, &sb, 1); //preform operation
   // NOTE you cannot use append mode when using sendfile();
   int queue = open("queue", O_WRONLY | O_APPEND | O_CREAT, 0664);
   int playlist = open(name, O_RDONLY);
@@ -393,7 +397,8 @@ int add_playlist_to_queue(const char * name){
   printf("Wrote %zd bytes\n", write(queue, x, playlist_size));
 
   printf("Added playlist %s to queue\n", name);
-  sb.sem_op = 1; //set the operation to up
+  sb.sem_op = 1; //set the operation to up;
+  semop(semd, &sb, 1); //preform operation
 
   return 0;
 }
@@ -404,9 +409,11 @@ int clear_queue(){
   sb.sem_num = 0;
   sb.sem_flg = SEM_UNDO;
   sb.sem_op = -1; //setting the operation to down
+  semop(semd, &sb, 1); //preform operation
   FILE * hold = fopen("queue", "w");
   fclose(hold);
   printf("Cleared Queue\n");
-  sb.sem_op = 1; //set the operation to up
+  sb.sem_op = 1; //set the operation to up;
+  semop(semd, &sb, 1); //preform operation
   return 0;
 }

@@ -1,7 +1,7 @@
 all: player adder
-	
-player:	player.o playerhelpers.o cJSON.o
-	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o
+
+player:	player.o playerhelpers.o cJSON.o adderhelpers.o
+	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o adderhelpers.o
 
 adder: adder.o adderhelpers.o  cJSON.o
 	gcc -o adder.run -I/usr/include adder.o -lSDL2 adderhelpers.o cJSON.o
