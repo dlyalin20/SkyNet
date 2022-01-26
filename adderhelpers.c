@@ -352,12 +352,12 @@ void remove_from_playlist() {
   for (i = 0; i < BUFFER_SIZE && bytsiz != ftell(file); i++) { // loops until done or at last byte
 
     fread(tmp->path, BUFFER_SIZE, sizeof(char), file);
-    fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
-    fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
-    if (!strcmp(buffer, tmp->title)) {
-      fseek(file, BUFFER_SIZE + sizeof(float), SEEK_CUR);
+    if (!strcmp(buffer, tmp->path)) {
+      fseek(file, (BUFFER_SIZE * 3) + sizeof(float), SEEK_CUR);
       continue;
     }
+    fread(tmp->artist, BUFFER_SIZE, sizeof(char), file);
+    fread(tmp->title, BUFFER_SIZE, sizeof(char), file);
     fread(tmp->genre, BUFFER_SIZE, sizeof(char), file);
     fread(&(tmp->seconds), sizeof(float), 1, file);
     playlist[n] = *tmp; // adds every song to playlist

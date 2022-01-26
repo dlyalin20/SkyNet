@@ -5,16 +5,16 @@ executable: player
 -Description: handles playing of sound
 -list_of_valid_commands
 
->> ./player -play [song path]
+>> ./player -p [song path]
 Plays a single song
 
->>./player -playplaylist [playlist name]
+>>./player -pp [playlist name]
 Plays a pre-created playlist
 Every song is played once
 No rewind is allowed; songs can be paused or skipped
 Playlist can be exited only by calling ctrl-C or Z; otherwise, every song must be skipped
 
->>./player -playqueue
+>>./player -pq
 Plays the songs in the queue.
 Must have at least one song in the queue.
 When queue becomes empty it waits for more songs to be added.
@@ -35,16 +35,16 @@ executable: adder
 -Description: handles setup of playlist and queue management
 -list_of_valid_commands
 
->>./adder -makeplaylistsimple
-Creates a playlist from songs in the current working directory
+>>./adder -makeps
+Creates a playlist from prompted songs in the current working directory
 
->>./adder -makeplaylist [path] 
+>>./adder -makep [path] 
 Creates a playlist from a directory anywhere in the file system
 
->>./adder -addtoplaylist
+>>./adder -add2p
 Prompts user for playlist and song and adds song to playlist
 
->>./adder -removefromplaylist
+>>./adder -ds
 Prompts user for playlist and song and removes song to playlist
 
 >>./adder -permashuffle
@@ -53,14 +53,14 @@ Prompts user for playlist and permanently shuffles it
 >>./adder -savesort
 Prompts user for playlist and sort type and permanently sorts playlist
 
->>./adder -addplaylisttoqueue [playlist name]
+>>./adder -addp2q [playlist name]
 Copies all songs in a playlist over into the queue
 Sets up the Queue if not setup already
 
->>./adder -addsongtoqueue [path]
+>>./adder -s2q [path]
 Adds a single song to the queue
 
->>./adder -clearqueue
+>>./adder -dq
 Clears the queue
 
 >> Any other combination of launching, ./adder

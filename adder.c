@@ -11,23 +11,23 @@ Handles
 void list_of_valid_commands(){ 
   printf("Warning: Max string length is %d, whitespace is not tolerated in prompts, and all songs are to be specified with .wav extension\n", BUFFER_SIZE);
   printf("Warning: Playlist max length is %d\n", BUFFER_SIZE);
-  printf("-makeplaylist [playlist path]\n");
+  printf("-makep [playlist path]\n");
   printf("\tCreates a playlist from all songs in the specified directory\n");
-  printf("-makeplaylistsimple\n");
+  printf("-makeps\n");
   printf("\tCreates a playlist with specified songs\n");
-  printf("-addtoplaylist\n");
+  printf("-add2p\n");
   printf("\tAllows for adding a song to an extant playlist\n");
-  printf("-removefromplaylist\n");
+  printf("-ds\n");
   printf("\tAllows for removing a song from an extant playlist\n");
   printf("-permashuffle\n");
   printf("\tPermanently shuffles user-inputted playlist\n");
   printf("-savesort\n");
   printf("\tAllows for sorting a playlist permanently\n");
-  printf("-addplaylisttoqueue [playlist name]\n");
+  printf("-addp2q [playlist name]\n");
   printf("\tAdds all the songs in specified playlist to queue\n");
-  printf("-clearqueue\n");
+  printf("-dq\n");
   printf("\tClears the queue\n");
-  printf("-addsongtoqueue [song name]\n");
+  printf("-s2q [song name]\n");
   printf("\tAdds specified song to queue\n");
 }
 
@@ -40,18 +40,18 @@ int main(int argc, char const *argv[]) {
     exit(0);
   }
   // make playlist from any directory
-   if (!strcmp(argv[1], "-makeplaylist")) {
+   if (!strcmp(argv[1], "-makep")) {
       printf("Creating playlist\n");
       make_playlist(argv[2]);
     }
     else
     // adds song to an extant playlist
-    if (!strcmp(argv[1], "-addtoplaylist")) {
+    if (!strcmp(argv[1], "-add2p")) {
         add_to_playlist();
     }
     else
     // removes song from extant playlist
-    if (!strcmp(argv[1], "-removefromplaylist")) {
+    if (!strcmp(argv[1], "-ds")) {
       remove_from_playlist();
     }
     else
@@ -66,24 +66,24 @@ int main(int argc, char const *argv[]) {
     }
     else
     // make playlist from current working directory
-    if (!strcmp(argv[1], "-makeplaylistsimple")) {
+    if (!strcmp(argv[1], "-makeps")) {
       printf("Creating simpled playlist\n");
       make_playlist_simple();
     }
     else
     // add playlist to queue
-    if (!strcmp(argv[1], "-addplaylisttoqueue")){
+    if (!strcmp(argv[1], "-addp2q")){
       printf("Playlist Name: %s\n", argv[2]);
       add_playlist_to_queue(argv[2]);
     }
     else
     // clear_queue
-    if (!strcmp(argv[1], "-clearqueue")){
+    if (!strcmp(argv[1], "-dq")){
       clear_queue();
     }
     else
     // add_song_to_queue
-    if (!strcmp(argv[1], "-addsongtoqueue")){
+    if (!strcmp(argv[1], "-s2q")){
       add_song_to_queue(argv[2]);
     }
 
