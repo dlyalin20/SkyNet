@@ -244,3 +244,30 @@ void play_sorted() {
   free(buffer);
 
 }
+
+// takes null; shuffles and plays playlist; returns null
+void play_shuffle() {
+
+  char *buffer;
+  get_pname(buffer); // prompts for playlist name
+
+  char *filename = calloc(BUFFER_SIZE, sizeof(char));
+  strcpy(filename, buffer);
+
+  FILE *file = fopen(buffer, "rb");
+  if (file == NULL) {
+    printf("Error opening playlist: %s\n", strerror(errno));
+  }
+  int i;
+  struct song_info playlist[BUFFER_SIZE];
+  f2p(playlist, file, &i); // copies file into playlist
+
+  shuffle(playlist, i); // shuffles playlist
+
+  int n;
+  for (n = 0; n < i; n++) {
+    printf("Playing %s by %s\n", playlist[n].title, playlist[n].artist);
+    play_wav(playlist[n].path);
+  }
+
+}

@@ -575,16 +575,13 @@ int create_sema(){
   int v, r;
   int semd = semget(QUEUEKEY, 1, IPC_CREAT | IPC_EXCL | 0644);
   if (semd == -1) {
-    // printf("error %d: %s\n", errno, strerror(errno));
     semd = semget(QUEUEKEY, 1, 0);
     v = semctl(semd, 0, GETVAL, 0);
-    // printf("semctl returned: %d\n", v);
   }
   else {
     union semun us;
     us.val = 1;
     r = semctl(semd, 0, SETVAL, us);
-    // printf("semctl returned: %d\n", r);
   }
   return semd;
 }
@@ -666,4 +663,52 @@ int clear_queue(){
   printf("Cleared Queue\n");
   sb.sem_op = 1; //set the operation to up
   return 0;
+}
+
+// takes playlist and size of playlist; shuffles playlist; returns void
+void shuffle(struct song_info *arr, size_t n)
+{
+    if (n > 1)
+    {
+        size_t i;
+        for (i = 0; i < n - 1; i++)
+        {
+          size_t j = rand() % n;
+          struct song_info t = arr[j];
+          arr[j] = arr[i];
+          arr[i] = t;
+        }
+    }
+}
+
+// takes null; permanently shuffles playlist; returns null
+void perma_shuffle() {
+
+  char *buffer;
+  get_pname(buffer); // prompts for playlist name
+
+  char *filename = calloc(BUFFER_SIZE, sizeof(char));
+  strcpy(filename, buffer);
+
+  FILE *file = fopen(buffer, "rb");
+  if (file == NULL) {
+    printf("Error opening playlist: %s\n", strerror(errno));
+  }
+  int i;
+  struct song_info playlist[BUFFER_SIZE];
+  f2p(playlist, file, &i); // copies file into playlist
+
+  shuffle(playlist, i); // shuffles playlist
+
+  remove(filename); // removes old file
+
+  file = fopen(filename, "wb"); // creates new file
+  if (file == NULL) {
+    printf("Error opening playlist: %s\n", strerror(errno));
+  }
+
+  i = 0;
+  p2f(playlist, file, &i); // writes playlist to file
+
+  printf("Playlist shuffled!\n");
 }

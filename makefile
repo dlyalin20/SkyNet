@@ -1,10 +1,10 @@
 all: player adder
 
 player:	player.o playerhelpers.o adderhelpers.o cJSON.o
-	clang -o player.run  player.o -lSDL2 playerhelpers.o cJSON.o adderhelpers.o
+	clang -o player  player.o -lSDL2 playerhelpers.o cJSON.o adderhelpers.o
 
 adder: adder.o adderhelpers.o playerhelpers.o cJSON.o
-	gcc -o adder.run -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -framework SDL2 -lSDL2 adder.o adderhelpers.o playerhelpers.o cJSON.o
+	gcc -o adder -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -framework SDL2 -lSDL2 adder.o adderhelpers.o playerhelpers.o cJSON.o
 
 player.o: player.c cJSON.h includes.h
 	gcc -c player.c

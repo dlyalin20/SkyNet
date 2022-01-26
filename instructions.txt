@@ -1,66 +1,72 @@
 Some notes:
 All songs must by .wav files
 
-executable: player.run
+executable: player
 -Description: handles playing of sound
 -list_of_valid_commands
 
->> ./player.run -play [song path]
+>> ./player -play [song path]
 Plays a single song
 
->>./player.run -playplaylist [playlist name]
+>>./player -playplaylist [playlist name]
 Plays a pre-created playlist
 Every song is played once
 No rewind is allowed; songs can be paused or skipped
 Playlist can be exited only by calling ctrl-C or Z; otherwise, every song must be skipped
 
->>./player.run -playqueue
+>>./player -playqueue
 Plays the songs in the queue.
 Must have at least one song in the queue.
 When queue becomes empty it waits for more songs to be added.
 
->>./player.run -playsort
+>>./player -playsort
 Prompts user for a playlist, sorts that playlist as user desires, and plays all the songs
 Sort is not permanent
 Same rules apply as for playing normal playlists
 
->> Any other combination of launching, ./player.run
+>>./player -playshuffle
+Prompts user for a playlist, shuffles that playlist, and plays it 
+Shuffle is not permanent
+
+>> Any other combination of launching, ./player
 Prints out a list of valid commands with their descriptions
 
-executable: adder.run
+executable: adder
 -Description: handles setup of playlist and queue management
 -list_of_valid_commands
 
->>./adder.run -makeplaylistsimple
+>>./adder -makeplaylistsimple
 Creates a playlist from songs in the current working directory
 
->>./adder.run -makeplaylist [path] 
+>>./adder -makeplaylist [path] 
 Creates a playlist from a directory anywhere in the file system
 
->>./adder.run -addtoplaylist
+>>./adder -addtoplaylist
 Prompts user for playlist and song and adds song to playlist
 
->>./adder.run -removefromplaylist
+>>./adder -removefromplaylist
 Prompts user for playlist and song and removes song to playlist
 
->>./adder.run -savesort
+>>./adder -permashuffle
+Prompts user for playlist and permanently shuffles it
+
+>>./adder -savesort
 Prompts user for playlist and sort type and permanently sorts playlist
 
->>./adder.run -addplaylisttoqueue [playlist name]
+>>./adder -addplaylisttoqueue [playlist name]
 Copies all songs in a playlist over into the queue
 Sets up the Queue if not setup already
 
->>./adder.run -addsongtoqueue [path]
+>>./adder -addsongtoqueue [path]
 Adds a single song to the queue
 
->>./adder.run -clearqueue
+>>./adder -clearqueue
 Clears the queue
 
->> Any other combination of launching, ./adder.run
+>> Any other combination of launching, ./adder
 Prints out a list of valid commands
 
 Planned usage for solo listening:
-On one terminal tab, play songs using player.run commands
+On one terminal tab, play songs using player commands
 exit any command with ctrl+c
-On another terminal tab, increase playing capabilities
-using adder.run commands
+On another terminal tab, increase playing capabilities using adder commands

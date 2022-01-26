@@ -8,7 +8,7 @@ Handles
 #include "includes.h"
 #include "adderhelpers.h"
 
-void list_of_valid_commands(){ // finish this
+void list_of_valid_commands(){ 
   printf("Warning: Max string length is %d, whitespace is not tolerated in prompts, and all songs are to be specified with .wav extension\n", BUFFER_SIZE);
   printf("Warning: Playlist max length is %d\n", BUFFER_SIZE);
   printf("-makeplaylist [playlist path]\n");
@@ -19,6 +19,8 @@ void list_of_valid_commands(){ // finish this
   printf("\tAllows for adding a song to an extant playlist\n");
   printf("-removefromplaylist\n");
   printf("\tAllows for removing a song from an extant playlist\n");
+  printf("-permashuffle\n");
+  printf("\tPermanently shuffles user-inputted playlist\n");
   printf("-savesort\n");
   printf("\tAllows for sorting a playlist permanently\n");
   printf("-addplaylisttoqueue [playlist name]\n");
@@ -30,13 +32,14 @@ void list_of_valid_commands(){ // finish this
 }
 
 int main(int argc, char const *argv[]) {
+
   if (--argc < 1){
-    // if there are no arguements
+    // if there are no arguments
     printf("Please provide at least one argument\n");
     list_of_valid_commands();
     exit(0);
   }
-  // make playlist from any directory: working on intergrating it
+  // make playlist from any directory
    if (!strcmp(argv[1], "-makeplaylist")) {
       printf("Creating playlist\n");
       make_playlist(argv[2]);
@@ -50,6 +53,11 @@ int main(int argc, char const *argv[]) {
     // removes song from extant playlist
     if (!strcmp(argv[1], "-removefromplaylist")) {
       remove_from_playlist();
+    }
+    else
+    // permanently shuffles playlist
+    if (!strcmp(argv[1], "-permashuffle")) {
+      perma_shuffle();
     }
     else
     // saves a sorted playlist

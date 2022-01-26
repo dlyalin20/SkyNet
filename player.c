@@ -20,6 +20,8 @@ void list_of_valid_commands(){
   printf("\tPlays the specified playlist\n");
   printf("-playsort\n");
   printf("\tAllows for sorting and playing a playlist without permanently altering it\n");
+  printf("-playshuffle\n");
+  printf("\tShuffles and plays playlist without permanently altering it\n");
 }
 int main(int argc, char const *argv[]) {
   if (--argc < 1){
@@ -51,6 +53,11 @@ int main(int argc, char const *argv[]) {
   // plays sorted playlist
   if (!strcmp(argv[1], "-playsort")) 
       play_sorted();
+  else
+  // shuffles and plays playlist
+  if (!strcmp(argv[1], "-playshuffle")) {
+    play_shuffle();
+  }
   else {
     printf("%s is Not a valid command\n", argv[1]);
     list_of_valid_commands();
