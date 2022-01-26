@@ -10,7 +10,10 @@ Daniel; 10:10 PM, Saturday, January 22; Finished half of playlist and init funct
 Shane; 10:01 AM, Tuesday, January 25; Added all sort functions
 Daniel; 3:34 PM, Tuesday, January 25; Added mac compatibility for server funcs
 Daniel; 5:40 PM, Tuesday, January 25; Added helper funcs for cleaner code
+Jason; 5:03 PM, Tuesday, January 25; Created redo branch, redoing the project for better clarity
 Jason; 5:45 PM, Tuesday, January 25; Finished sempahore functionality
+Jason; 7:00 PM, Tuesday, January 25; Finished Queue Functionality
 Daniel; 6:48 PM, Tuesday, January 25; Organized code and made comments, also added user side features
 Daniel; 7:39 PM, Tuesday, January 25; Added shuffling features
 Daniel; 8:40 PM, Tuesday, January 25; Added detailed instructions and README
+Jason; 9:48 PM, Tuesday, January 25; Implemented Build Playlist by path
