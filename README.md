@@ -116,15 +116,15 @@ Player is used for playing songs, playlists, and queues. Below are all possible 
 
 We've included five sample .wav files (ex1.wav, ex2.wav, ex3.wav, wav.wav, CantinaBand3.wav) for easy test usage. Try running the code below to get an idea of how the program works. It is intended that both adder and player are in the same directory as the audio files and are run from separate terminal prompts (not that this would make any functional difference). Obviously, the example usage below does not include all possible cases, but is a nice start.
 
-* ./player -p ex1.wav
-* ./adder -makeps
-* ./player -pp
-* ./adder -add2p
-* ./adder -ds
-* ./adder -permashuffle
-* ./player -pp
-* ./adder -addp2q "playlist name"
-* ./player -pq
-* ./player -playsort "playlist name"
-* ./adder -pp ModelSongs
-* ./player -pp "playlist name"
+1. ./player -p ex1.wav
+2. ./adder -makeps
+3. ./player -pp
+4. ./adder -add2p
+5. ./adder -ds
+6. ./adder -permashuffle
+7. ./player -pp
+8. ./adder -addp2q "playlist name"
+9. ./player -pq
+10. ./player -playsort "playlist name"
+11. ./adder -pp ModelSongs
+12. ./player -pp "playlist name"
