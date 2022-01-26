@@ -74,7 +74,7 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     else {
         wait(&wstatus);
         if (WEXITSTATUS(wstatus)) {
-          exit(-1); // if failed 
+          exit(-1); // if failed
         }
     }
 
@@ -98,22 +98,22 @@ struct song_info * get_song_info(struct song_info *info, char *PATH) {
     // jason workaround ---- reads fields from cJSON struct into song_info struct
     cJSON *cTitle = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Title");
     char unknownstring[] = "Unknown";
-    if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL)) 
+    if (cJSON_IsString(cTitle) && (cTitle->valuestring != NULL))
         strcpy(info->title, cTitle->valuestring);
-    else 
+    else
         strcpy(info->title, unknownstring);
 
     strcpy(info->path, PATH);
 
     cJSON *cArtist = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Artist");
-    if (cJSON_IsString(cArtist) && (cArtist->valuestring != NULL)) 
+    if (cJSON_IsString(cArtist) && (cArtist->valuestring != NULL))
         strcpy(info->artist, cArtist->valuestring);
     else
         strcpy(info->artist, unknownstring);
-    
+
 
     cJSON *cGenre = cJSON_GetObjectItemCaseSensitive(song_json, "RIFF:Genre");
-    if (cJSON_IsString(cGenre) && (cGenre->valuestring != NULL)) 
+    if (cJSON_IsString(cGenre) && (cGenre->valuestring != NULL))
       strcpy(info->genre, cGenre->valuestring);
     else
       strcpy(info->genre, unknownstring);
@@ -182,7 +182,7 @@ void get_sname(char *buffer) {
 }
 
 // takes null; makes playlist by prompting for songs; returns int
-int make_playlist_simple() { 
+int make_playlist_simple() {
 
   signal(SIGINT, &sighandler);
   signal(SIGSTOP, &sighandler);
@@ -222,42 +222,39 @@ int make_playlist_simple() {
 
 // takes null; makes a playlist; returns int
 int make_playlist(const char * path) {
-
   signal(SIGINT, &sighandler);
   signal(SIGSTOP, &sighandler);
 
   // copy target path
   char *filelocation = calloc(BUFFER_SIZE, sizeof(char));
   strcpy(filelocation, path);
+  char cwd[BUFFER_SIZE];
+  getcwd(cwd, BUFFER_SIZE);
+  chdir(path);
+  char targetpath[BUFFER_SIZE];
+  getcwd(targetpath, BUFFER_SIZE);
+  chdir(cwd);
+  printf("From %s\n", targetpath);
+
   char *buffer = calloc(BUFFER_SIZE, sizeof(char));
   get_pname(buffer);
-  char playlist_name[BUFFER_SIZE];
-  strcpy(playlist_name, buffer);
-  strcat(filelocation, "/");
-  strcat(filelocation, playlist_name);
-  FILE *file = fopen(playlist_name, "wb+");
+  FILE *file = fopen(buffer, "wb+");
   if (file == NULL) {
     printf("Error: %s\n", strerror(errno));
     exit(-1);
   }
+  printf("%s\n", buffer);
   // search songs from the target path
-  struct stat stats;
-  while (1) {
-    get_sname(buffer);
-    strcpy(filelocation, path);
-    strcat(filelocation, "/");
-    strcat(filelocation, buffer);
-    printf("%s\n", filelocation);
-    // filelocation is now [path]/song'/0'
-    char * ext = strrchr(filelocation,'.');
-    if (!strcmp(buffer, "exit"))
-      break;
-    if (!stat(filelocation, &stats) && ext != NULL && !strcmp(ext, ".wav")) {
-      strcpy(buffer, filelocation);
-      s2f(buffer, file);
-    }
-    else {
-      printf("%s doesn't exist\n", filelocation);
+  struct dirent *entry;
+  DIR * d = opendir(path);
+  while ((entry = readdir(d))){
+    if (entry->d_type == DT_REG){
+      char * ext = strrchr(entry->d_name,'.');
+      if (ext != NULL && !strcmp(ext,".wav")){
+        struct song_info *tmp = calloc(1, sizeof(struct song_info));
+        strcpy(buffer, entry->d_name);
+        s2f(buffer, file);
+      }
     }
   }
   free(buffer);
@@ -365,7 +362,7 @@ void remove_from_playlist() {
   }
 
   free(tmp);
-  fclose(file); 
+  fclose(file);
   remove(filename); // deletes file bcs impossible to overwrite; easier to just remake
 
   file = fopen(filename, "wb"); // opens for binary writing
@@ -504,7 +501,7 @@ void sort(char *buffer, struct song_info *playlist, FILE *file, int *i) {
   signal(SIGSTOP, &sighandler);
 
   printf("Sort by 'title', 'artist', 'genre', or 'duration', or 'exit': \n");
-  read(STDIN_FILENO, buffer, BUFFER_SIZE); 
+  read(STDIN_FILENO, buffer, BUFFER_SIZE);
   char *rm2 = strrchr(buffer, '\n');
   rm2[0] = '\0';
 
@@ -550,7 +547,7 @@ void sort_write() {
     printf("Error opening playlist: %sn", strerror(errno));
   }
 
-  struct song_info playlist[BUFFER_SIZE]; 
+  struct song_info playlist[BUFFER_SIZE];
   int i;
   f2p(playlist, file, &i); // reads file into playlist
 

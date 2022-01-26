@@ -8,7 +8,7 @@ Handles
 #include "includes.h"
 #include "adderhelpers.h"
 
-void list_of_valid_commands(){ 
+void list_of_valid_commands(){
   printf("Warning: Max string length is %d, whitespace is not tolerated in prompts, and all songs are to be specified with .wav extension\n", BUFFER_SIZE);
   printf("Warning: Playlist max length is %d\n", BUFFER_SIZE);
   printf("-makep [playlist path]\n");
@@ -65,7 +65,7 @@ int main(int argc, char const *argv[]) {
       sort_write();
     }
     else
-    // make playlist from current working directory
+    // make playlist, choosing song to add
     if (!strcmp(argv[1], "-makeps")) {
       printf("Creating simpled playlist\n");
       make_playlist_simple();

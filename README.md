@@ -8,7 +8,7 @@ Systems Level Programming Final Project. Buyer beware!
 Our project, most generally, is a music playing application that allows for terminal
 interaction with .wav files (and only .wav files!). Via the SDL2 library, users can
 play individual audio files ('songs'), create and interact with playlists, create and
-interact with song queues, and set up servers to listen to songs/playlists over multiple devices. 
+interact with song queues, and set up servers to listen to songs/playlists over multiple devices.
 
 # Required Libraries + Installation Instructions:
 * SDL2:
@@ -24,7 +24,7 @@ interact with song queues, and set up servers to listen to songs/playlists over 
     * Windows:
         1. Godspeed!
 * exiftool:
-    * OSX: 
+    * OSX:
         1. Download from here: https://exiftool.org/index.html
         2. Follow the instructions.
     * Unix:
@@ -51,14 +51,15 @@ Because there are three component programs to our project, we have included guid
 4. When we prompt for input, we expect for there to be no whitespace outside of new-line ("\n") characters; this means you should be entering single-word answers for all prompts, which is what they all ask for. This is not Spotify: no need for quirky, five sentence playlist names!
 5. The maximum characters any string buffer in our program can store is 100; hence, please make sure all inputs are <= 100 characters.
 6. Permanently is taken to mean that the previous state of something is made irretrievable, not that it cannot be changed again and is immutable.
-7. Once a playlist is playing, it cannot be directly stopped except by skipping through every song one by one. Only individual songs can be quit or paused/unpaused. It is possible Ctrl-C or Ctrl-Z may do the job, but expected results are not guaranteed due to SDL volatility. 
-8. Commands CANNOT be stacked; this means trying to execute more than one command or flag at a time will result in an warning. 
+7. Once a playlist is playing, it cannot be directly stopped except by skipping through every song one by one. Only individual songs can be quit or paused/unpaused. It is possible Ctrl-C or Ctrl-Z may do the job, but expected results are not guaranteed due to SDL volatility.
+8. Commands CANNOT be stacked; this means trying to execute more than one command or flag at a time will result in an warning.
+9. All initialized playlists must have unique names, if a new playlist is created with the same name, it will overwrite the other one
 
 # Using Adder
 
 Adder is used for manipulating playlists and the queue. Below are all possible uses of adder described:
 
-* `./adder -makeps` (Make Playlist from Songs): 
+* `./adder -makeps` (Make Playlist from Songs):
     1. Prompts user for a playlist name
     2. Loops through prompting user for songs and adding songs to playlist
     3. Loop exited with command "exit"
@@ -71,7 +72,7 @@ Adder is used for manipulating playlists and the queue. Below are all possible u
     3. Adds song to playlist
 * `./adder -ds` (Delete Song from Playlist):
     1. Prompts user for playlist
-    2. Prompts user for song to delete 
+    2. Prompts user for song to delete
     3. Removes that song from playlist
 * `./adder -permashuffle` (Permanently Shuffle Playlist):
     1. Prompts user for playlist
@@ -115,4 +116,4 @@ Player is used for playing songs, playlists, and queues. Below are all possible 
 
 Server is used for . Below are all possible uses of server described:
 
-* 
+*
