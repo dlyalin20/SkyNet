@@ -129,14 +129,17 @@ void play_queue(){
     if (file == NULL) {
       printf("Error Opening Queue: %s\n", strerror(errno));
     }
+    int semd = create_sema();
     struct sembuf sb;
     sb.sem_num = 0;
     sb.sem_flg = SEM_UNDO;
     sb.sem_op = -1; //setting the operation to down
+    semop(semd, &sb, 1); //preform operation
 
     int freadsize = fread(&path, sizeof(char), BUFFER_SIZE, file);
     if (freadsize < BUFFER_SIZE){
-      sb.sem_op = 1; //set the operation to up
+      sb.sem_op = 1; //set the operation to up;
+      semop(semd, &sb, 1); //preform operation
       printf("Queue Empty Awaiting More Songs\n");
       sleep(1);
       continue;
@@ -161,7 +164,9 @@ void play_queue(){
     fwrite(x, sizeof(char), rest_of_file_size, file);
     fclose(file);
     free(x);
-    sb.sem_op = 1; //set the operation to up
+    sb.sem_op = 1; //set the operation to up;
+    semop(semd, &sb, 1); //preform operation
+
 
     struct song_info *tmp = calloc(1, sizeof(struct song_info));
     strcpy(tmp->path, path);
@@ -179,7 +184,7 @@ void play_queue(){
 
 // takes playlist name; plays all songs in playlist; returns int
 int play_playlist(const char *playlist_name) {
-  
+
   signal(SIGINT, &sighandler);
   signal(SIGSTOP, &sighandler);
 
