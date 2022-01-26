@@ -7,8 +7,7 @@
 #define QUEUEKEY 24602
 #define BUFFER_SIZE 100
 
-#if !(defined(_APPLE_) && defined(_MACH_))
-	#include <sys/sendfile.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || !(defined(__APPLE__) && defined(__MACH__))) || defined(__CYGWIN___)
 	union semun {
 	int              val;    // Value for SETVAL
 	struct semid_ds *buf;    // Buffer for IPC_STAT, IPC_SET *\/

@@ -41,7 +41,7 @@ interact with song queues, and set up servers to listen to songs/playlists over 
 
 # Project Instructions:
 
-Because there are three component programs to our project, we have included guides on how to interact with each one separately. The three components are: adder (used for manipulating data structures), player (used for playing music), server (for interaction over local network). Instructions are also included for adder and player in the instructions.txt file and for the server in instructionsSERVER.txt.
+Because there are two large component programs to our project, we have included guides on how to interact with each one separately. The two components are adder (used for manipulating data structures) and player (used for playing music). Initially, we planned to also have a server for multi-machine audio playing and sharing, but, due to time constraints, that portion was cut out. Instructions are below and also included in the instructions.txt file.
 
 ## Warnings:
 
@@ -55,7 +55,7 @@ Because there are three component programs to our project, we have included guid
 8. Commands CANNOT be stacked; this means trying to execute more than one command or flag at a time will result in an warning.
 9. All initialized playlists must have unique names, if a new playlist is created with the same name, it will overwrite the other one
 
-# Using Adder
+## Using Adder
 
 Adder is used for manipulating playlists and the queue. Below are all possible uses of adder described:
 
@@ -90,7 +90,7 @@ Adder is used for manipulating playlists and the queue. Below are all possible u
 * `./adder -dq` (Delete Queue):
     1. Clears the queue of all songs
 
-# Using Player:
+## Using Player:
 
 Player is used for playing songs, playlists, and queues. Below are all possible uses of player described:
 
@@ -112,8 +112,19 @@ Player is used for playing songs, playlists, and queues. Below are all possible 
     2. Temporarily shuffles playlist
     3. Plays playlist in temporarily shuffled order
 
-# Using Server:
+# Sample Usage:
 
-Server is used for . Below are all possible uses of server described:
+We've included five sample .wav files (ex1.wav, ex2.wav, ex3.wav, wav.wav, CantinaBand3.wav) for easy test usage. Try running the code below to get an idea of how the program works. It is intended that both adder and player are in the same directory as the audio files and are run from separate terminal prompts (not that this would make any functional difference). Obviously, the example usage below does not include all possible cases, but is a nice start.
 
-*
+./player -p ex1.wav
+./adder -makeps
+./player -pp
+./adder -add2p
+./adder -ds
+./adder -permashuffle
+./player -pp
+./adder -addp2q "playlist name"
+./player -pq
+./player -playsort "playlist name"
+./adder -pp ModelSongs
+./player -pp "playlist name"
