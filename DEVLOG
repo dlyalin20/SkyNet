@@ -1,12 +1,16 @@
 Daniel; 3:16 PM, Monday, January 17; Added main, helpers.c, helpers.h, makefile; Wrote init
+Shane; 4:34 PM, Tuesday, January 18; Added preliminary imports and installs
 Daniel; 6:40 PM, Wednesday, January 19; Added structs and function for reading and playing wav files; Error: can't pause music
 Jason; 9:59 AM, Thursday, January 20; Added shell program that will read keyboard key presses as input for music playing program
 Daniel; 11:30 AM, Thursday, January 20; Organization and makefile
 Daniel; 10:06 PM, Friday, January 21; Began working on lyric api, including python file, parsing file metadata, and running py from c
 Daniel; 7:37 PM; Saturday, January 22; Finished pausing and quitting songs
-Daniel; 10:10 PM, Saturday, Januart 22; Finished half of playlist and init functionality
+Jason; 6:19 PM, Sunday, January 23; Added all queue functionality
+Daniel; 10:10 PM, Saturday, January 22; Finished half of playlist and init functionality
+Shane; 10:01 AM, Tuesday, January 25; Added all sort functions
 Daniel; 3:34 PM, Tuesday, January 25; Added mac compatibility for server funcs
 Daniel; 5:40 PM, Tuesday, January 25; Added helper funcs for cleaner code
+Jason; 5:45 PM, Tuesday, January 25; Finished sempahore functionality
 Daniel; 6:48 PM, Tuesday, January 25; Organized code and made comments, also added user side features
 Daniel; 7:39 PM, Tuesday, January 25; Added shuffling features
 Daniel; 8:40 PM, Tuesday, January 25; Added detailed instructions and README
