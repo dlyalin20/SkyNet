@@ -10,8 +10,18 @@ int main(int argc, char const *argv[]) {
     if (client_socket){
       //handshake handled, read request
       //testing server setup----
-      printStream(client_socket);
+      // printStream(client_socket);
       //----
+      // get request
+      char input[BUFFER_SIZE];
+      read(client_socket, input, BUFFER_SIZE);
+
+      // add this song to the queue
+      if (!strcmp(argv[1], "add")){
+        add_song_to_queue(client_socket);
+      }
+
+
       //request handled: exit
       printf("Request Handled\n");
       exit(0);

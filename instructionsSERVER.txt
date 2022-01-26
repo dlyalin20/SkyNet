@@ -13,9 +13,8 @@ To handle these new capabilities, we use two new executable files
 
 BIG WORK IN PROGRESS, working on file sharing rn
 
-Server.run + AdderClient.run
-These two programs talk to each other, AdderClient uses adder.run through
-excepvp
+NEEDED EXEC FILES: Server + AdderClient
+These two programs talk to each other, AdderClient occationally calls adder in order to update its version of the queue
 
 MVP 3 protocals in total all client to server
 - Add this song
