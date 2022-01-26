@@ -53,7 +53,8 @@ Because there are two large component programs to our project, we have included 
 6. Permanently is taken to mean that the previous state of something is made irretrievable, not that it cannot be changed again and is immutable.
 7. Once a playlist is playing, it cannot be directly stopped except by skipping through every song one by one. Only individual songs can be quit or paused/unpaused. It is possible Ctrl-C or Ctrl-Z may do the job, but expected results are not guaranteed due to SDL volatility.
 8. Commands CANNOT be stacked; this means trying to execute more than one command or flag at a time will result in an warning.
-9. All initialized playlists must have unique names, if a new playlist is created with the same name, it will overwrite the other one
+9. All initialized playlists must have unique names; if a new playlist is created with the same name, it will overwrite the other one.
+10. When compiling, the 'makefile' is targeted at OSX-running machines. 'makefilelin' is targeted at Linux machines (theoretically including Ubuntu).
 
 ## Using Adder
 

@@ -4,6 +4,7 @@ Daniel; 6:40 PM, Wednesday, January 19; Added structs and function for reading a
 Jason; 9:59 AM, Thursday, January 20; Added shell program that will read keyboard key presses as input for music playing program
 Daniel; 11:30 AM, Thursday, January 20; Organization and makefile
 Daniel; 10:06 PM, Friday, January 21; Began working on lyric api, including python file, parsing file metadata, and running py from c
+Shane: 2:05 PM, Saturday, January 22; wrote function to search and collect song files for playlists
 Daniel; 7:37 PM; Saturday, January 22; Finished pausing and quitting songs
 Jason; 6:19 PM, Sunday, January 23; Added all queue functionality
 Daniel; 10:10 PM, Saturday, January 22; Finished half of playlist and init functionality
