@@ -4,41 +4,60 @@ All songs must by .wav files
 executable: player.run
 -Description: handles playing of sound
 -list_of_valid_commands
+
 >> ./player.run -play [song path]
 Plays a single song
 
 >>./player.run -playplaylist [playlist name]
 Plays a pre-created playlist
+Every song is played once
+No rewind is allowed; songs can be paused or skipped
+Playlist can be exited only by calling ctrl-C or Z; otherwise, every song must be skipped
 
 >>./player.run -playqueue
 Plays the songs in the queue.
 Must have at least one song in the queue.
 When queue becomes empty it waits for more songs to be added.
 
+>>./player.run -playsort
+Prompts user for a playlist, sorts that playlist as user desires, and plays all the songs
+Sort is not permanent
+Same rules apply as for playing normal playlists
+
 >> Any other combination of launching, ./player.run
-Prints out a list of valid commands {WORK IN PROGRESS}
+Prints out a list of valid commands with their descriptions
 
 executable: adder.run
 -Description: handles setup of playlist and queue management
 -list_of_valid_commands
->> -makeplaylistsimple
+
+>>./adder.run -makeplaylistsimple
 Creates a playlist from songs in the current working directory
 
->> -makeplaylist [path] {WORK IN PROGRESS}
+>>./adder.run -makeplaylist [path] 
 Creates a playlist from a directory anywhere in the file system
 
->>-addplaylisttoqueue [playlist name]
+>>./adder.run -addtoplaylist
+Prompts user for playlist and song and adds song to playlist
+
+>>./adder.run -removefromplaylist
+Prompts user for playlist and song and removes song to playlist
+
+>>./adder.run -savesort
+Prompts user for playlist and sort type and permanently sorts playlist
+
+>>./adder.run -addplaylisttoqueue [playlist name]
 Copies all songs in a playlist over into the queue
 Sets up the Queue if not setup already
 
->>-addsongtoqueue [path]
+>>./adder.run -addsongtoqueue [path]
 Adds a single song to the queue
 
->> -clearqueue
+>>./adder.run -clearqueue
 Clears the queue
 
 >> Any other combination of launching, ./adder.run
-Prints out a list of valid commands {WORK IN PROGRESS}
+Prints out a list of valid commands
 
 Planned usage for solo listening:
 On one terminal tab, play songs using player.run commands

@@ -4,21 +4,8 @@
 #define INCLUDES "defined"
 
 // preprocessor variables
-#define BUFFER_SIZE 100
-#define MUS_PATH "ex1.wav"
-/* #define secKey ftok("main.c", getpid());
-#define specKey ftok("shell.c", getpid());
-#define lenKey ftok("helpers.c", getpid());
-#define bufKey ftok("parsing.c", getpid()); */
-
-#define secKey 100
-#define specKey 200
-#define lenKey 300
-#define bufKey 400
-#define IDKey 500
-#define maxKey 600
-
 #define QUEUEKEY 24602
+#define BUFFER_SIZE 100
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) || defined(__CYGWIN___)
 	union semun {
@@ -59,23 +46,17 @@
 
 struct song_info {
 
-    char path[BUFFER_SIZE];
-	char artist[BUFFER_SIZE];
-	char title[BUFFER_SIZE];
-	char genre[BUFFER_SIZE];
-	float seconds;
+    char path[BUFFER_SIZE]; // file path; includes extension
+	char artist[BUFFER_SIZE]; // file artist
+	char title[BUFFER_SIZE]; // file title
+	char genre[BUFFER_SIZE]; // file genre
+	float seconds; // duration in milliseconds
 
 };
 
-struct songs {
-
-	char name[BUFFER_SIZE];
-	struct songs *next;
-
-};
-
+// wav header struct
 struct WAV {
-
+						// Ex Size
 	char chunk_id[4]; // "RIFF" 4 bytes
 	int chunk_size; // 405040 4 bytes
 	char format[4]; // "WAVE" 4 bytes

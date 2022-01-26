@@ -3,8 +3,8 @@ all: player adder server adderclient includes.h
 player:	player.o playerhelpers.o cJSON.o adderhelpers.o
 	gcc -o player.run -I/usr/include player.o -lSDL2 playerhelpers.o cJSON.o adderhelpers.o
 
-adder: adder.o adderhelpers.o  cJSON.o
-	gcc -o adder.run -I/usr/include adder.o -lSDL2 adderhelpers.o cJSON.o
+adder: adder.o adderhelpers.o  playerhelpers.o cJSON.o
+	gcc -o adder.run -I/usr/include adder.o -lSDL2 adderhelpers.o playerhelpers.o cJSON.o
 
 server: server.o serverhelpers.o connections.o
 	gcc -o server.run server.o serverhelpers.o connections.o
